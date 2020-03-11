@@ -9,11 +9,10 @@ all		:
 		make -C ./core
 		make -C ./lib/Ncurses
 		make -C ./lib/SFML
-		mv ./core/arcade ./
+		make -C ./games/Snake
 
 core	:
 		make -C ./core
-		mv ./core/arcade ./
 
 games	:
 		make -C ./games/Snake
@@ -23,8 +22,10 @@ graphicals	:
 		make -C ./lib/SFML
 
 fclean	:
-		make fclean -C ./nm
-		make fclean -C ./objdump
+		make fclean -C ./core/
+		make fclean -C ./lib/Ncurses
+		make fclean -C ./lib/SFML
+		make fclean -C ./games/Snake
 
 re	:	fclean all
 
