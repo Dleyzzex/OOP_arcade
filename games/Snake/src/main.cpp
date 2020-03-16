@@ -54,19 +54,7 @@ void witch_color(std::string str)
         printw(str.c_str());
 }
 
-void PrintMap(std::vector<std::string> _map)
-{
-    init_pair(1, COLOR_RED, COLOR_BLACK);
-	attron(COLOR_PAIR(1));
-    for (size_t i = 0; i != _map.size(); i++) {
-        for (size_t j = 0; j != _map[i].size(); j++) {
-            std::string str(1, _map[i][j]);
-            witch_color(str);
-        }
-    }
-}
-
-void PrintGame_ncurses(char *av, std::map<int, std::pair<int, int>> _Snake, std::pair<int, int> _Food)
+void PrintGame(char *av, std::map<int, std::pair<int, int>> _Snake, std::pair<int, int> _Food)
 {
     std::vector<std::string> _map;
     std::string _Line;
@@ -299,7 +287,7 @@ std::pair<int, int> RemoveFood(char *av, std::vector<std::string> _map, std::pai
     return (_Food);
 }
 
-void my_Ncurses(void)
+void NcursesInit(void)
 {
     initscr();
     if(has_colors() == FALSE)
@@ -315,11 +303,21 @@ void my_Ncurses(void)
     timeout(100);
 }
 
+void EndWindows(void)
+{
+    endwin();
+}
+
+void ClearWindows(void)
+{
+    refresh();
+    clear();
+}
+
 int Snake(int ac, char **av)
 {
-    my_Ncurses();
+    NcursesInit(); //Initialisation de l'affichage en NCURSES
     std::vector<std::string> _map = FillMyMap(av);
-    PrintMap(_map);
     int _direction = 1;
     bool _can_go = TRUE;
     std::map<int, std::pair<int, int>> _Snake;
@@ -328,7 +326,7 @@ int Snake(int ac, char **av)
     _Snake = InitSnake(_Snake);
     _Snake = MoveSnake(_Snake, _direction);
     while (1) {
-        PrintGame_ncurses(av[1], _Snake, _Food);
+        PrintGame(av[1], _Snake, _Food); //Print Game en NCURSES
         _direction = GetMove(_direction);
         _can_go = CanMove(_map, _Snake, _direction);
         if (_can_go == FALSE)
@@ -336,10 +334,9 @@ int Snake(int ac, char **av)
         _Snake = Eat(_Food, _Snake, _direction);
         _Food = RemoveFood(av[1], _map, _Food, _Snake, _direction);
         _Snake = MoveSnake(_Snake, _direction);
-        refresh();
-        clear();
+        ClearWindows(); // Refresh + clear en NCURSES
     }
-    endwin();
+    EndWindows(); //Fin de Windows en NCURSES
     return 0;
 }
 
