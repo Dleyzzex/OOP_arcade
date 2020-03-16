@@ -66,7 +66,7 @@ void PrintMap(std::vector<std::string> _map)
     }
 }
 
-void PrintGame_ncurses(char *av, std::map<int , std::pair<int, int>> _Snake)
+void PrintGame_ncurses(char *av, std::map<int, std::pair<int, int>> _Snake, std::pair<int, int> _Food)
 {
     std::vector<std::string> _map;
     std::string _Line;
@@ -80,6 +80,7 @@ void PrintGame_ncurses(char *av, std::map<int , std::pair<int, int>> _Snake)
     int ko = 1;
     for (auto i = _Snake.begin(); i != _Snake.end(); i++, ko++)
         _map[_Snake.at(ko).first][_Snake.at(ko).second] = 'x';
+    _map[_Food.first][_Food.second] = 'o';
     init_pair(1, COLOR_WHITE, COLOR_BLACK);
 	attron(COLOR_PAIR(1));
     for (size_t i = 0; i != _map.size(); i++) {
@@ -172,12 +173,59 @@ bool CanMove(std::vector<std::string> _map, std::map<int, std::pair<int, int>> _
     return (TRUE);
 }
 
-std::map<int , std::pair<int, int>> InitSnake(std::map<int , std::pair<int, int>> _Snake)
+std::map<int, std::pair<int, int>> InitSnake(std::map<int, std::pair<int, int>> _Snake)
 {
     _Snake.insert({1, {10, 6}});
     _Snake.insert({2, {10, 5}});
     _Snake.insert({3, {10, 4}});
     return (_Snake);
+}
+
+int Myy(char *av)
+{
+    std::string _Line;
+    int i = 0;
+    std::ifstream myfile(av, std::ifstream::in);
+    if (myfile.is_open())
+        for (; getline(myfile, _Line); i++);
+    return (i);
+}
+
+int Myx(char *av)
+{
+    std::string _Line;
+    int i = 0;
+    std::ifstream myfile(av, std::ifstream::in);
+    if (myfile.is_open())
+        for (; getline(myfile, _Line);)
+            i = strlen(_Line.c_str());
+    return (i);
+}
+
+bool DontTouchSnake(std::map<int, std::pair<int, int>> _Snake, int nb1, int nb2)
+{
+    int ko = 1;
+    for (auto i = _Snake.begin(); ko < SizeMap(_Snake); i++, ko++) {
+        if (_Snake.at(ko).first == nb1 && _Snake.at(ko).second == nb2)
+            return (FALSE);
+    }
+    return (TRUE);
+}
+
+std::pair<int, int> InitFood(char *av, std::vector<std::string> _map, std::map<int, std::pair<int, int>> _Snake)
+{
+    std::pair<int, int> _Food;
+    srand(time(NULL));
+    int nb1 = 0;
+    int nb2 = 0;
+    for (int tmp = 0; tmp != 1;) {
+        nb2 = (rand() % Myx(av)) + 1;
+        nb1 = (rand() % Myy(av)) + 1;
+        if (_map[nb1][nb2] == ' ' && DontTouchSnake(_Snake, nb1, nb2) == TRUE)
+            tmp = 1;
+    }
+    _Food = {nb1, nb2};
+    return (_Food);
 }
 
 std::map<int, std::pair<int, int>> AddSnake(std::map<int, std::pair<int, int>> _Snake, int size)
@@ -217,21 +265,38 @@ std::map<int, std::pair<int, int>> MoveSnake(std::map<int, std::pair<int, int>> 
     return (_Snake);
 }
 
-std::map<int, std::pair<int, int>> Eat(std::vector<std::string> _map, std::map<int, std::pair<int, int>> _Snake, int _direction)
+std::map<int, std::pair<int, int>> Eat(std::pair<int, int> _Food, std::map<int, std::pair<int, int>> _Snake, int _direction)
 {
     if (_direction == 1)
-        if (_map[_Snake.at(1).first][_Snake.at(1).second + 1] == 'o')
+        if (_Snake.at(1).first == _Food.first && _Snake.at(1).second + 1 == _Food.second)
             _Snake = AddSnake(_Snake, SizeMap(_Snake));
     if (_direction == 2)
-        if (_map[_Snake.at(1).first][_Snake.at(1).second - 1] == 'o')
+        if (_Snake.at(1).first == _Food.first && _Snake.at(1).second - 1 == _Food.second)
             _Snake = AddSnake(_Snake, SizeMap(_Snake));
     if (_direction == 3)
-        if (_map[_Snake.at(1).first - 1][_Snake.at(1).second] == 'o')
+        if (_Snake.at(1).first - 1 == _Food.first && _Snake.at(1).second == _Food.second)
             _Snake = AddSnake(_Snake, SizeMap(_Snake));
     if (_direction == 4)
-        if (_map[_Snake.at(1).first + 1][_Snake.at(1).second] == 'o')
+        if (_Snake.at(1).first + 1 == _Food.first && _Snake.at(1).second == _Food.second)
             _Snake = AddSnake(_Snake, SizeMap(_Snake));
     return (_Snake);
+}
+
+std::pair<int, int> RemoveFood(char *av, std::vector<std::string> _map, std::pair<int, int> _Food, std::map<int, std::pair<int, int>> _Snake, int _direction)
+{
+    if (_direction == 1)
+        if (_Snake.at(1).first == _Food.first && _Snake.at(1).second + 1 == _Food.second)
+            _Food = InitFood(av, _map, _Snake);
+    if (_direction == 2)
+        if (_Snake.at(1).first == _Food.first && _Snake.at(1).second - 1 == _Food.second)
+            _Food = InitFood(av, _map, _Snake);
+    if (_direction == 3)
+        if (_Snake.at(1).first - 1 == _Food.first && _Snake.at(1).second == _Food.second)
+            _Food = InitFood(av, _map, _Snake);
+    if (_direction == 4)
+        if (_Snake.at(1).first + 1 == _Food.first && _Snake.at(1).second == _Food.second)
+            _Food = InitFood(av, _map, _Snake);
+    return (_Food);
 }
 
 void my_Ncurses(void)
@@ -257,16 +322,19 @@ int Snake(int ac, char **av)
     PrintMap(_map);
     int _direction = 1;
     bool _can_go = TRUE;
-    std::map<int , std::pair<int, int>> _Snake;
+    std::map<int, std::pair<int, int>> _Snake;
+    std::pair<int, int> _Food;
+    _Food = InitFood(av[1], _map, _Snake);
     _Snake = InitSnake(_Snake);
     _Snake = MoveSnake(_Snake, _direction);
     while (1) {
-        PrintGame_ncurses(av[1], _Snake);
+        PrintGame_ncurses(av[1], _Snake, _Food);
         _direction = GetMove(_direction);
         _can_go = CanMove(_map, _Snake, _direction);
         if (_can_go == FALSE)
             break;
-        _Snake = Eat(_map, _Snake, _direction);
+        _Snake = Eat(_Food, _Snake, _direction);
+        _Food = RemoveFood(av[1], _map, _Food, _Snake, _direction);
         _Snake = MoveSnake(_Snake, _direction);
         refresh();
         clear();
