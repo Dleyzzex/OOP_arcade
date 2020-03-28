@@ -4,7 +4,7 @@ CC	= g++
 
 RM	= rm -f
 
-SRCS	= ./main.cpp
+SRCS	= ./Ncurses.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
 
