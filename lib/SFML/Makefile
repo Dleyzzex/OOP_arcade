@@ -6,16 +6,16 @@
 ##
 
 DIR_SRC	=	./src/
-DIR_INC	=	./include/
-DIR_INT = 	./lib/SFML/include
+DIR_INC	=	../../include/interface/
+DIR_INT = 	./include/
 
 NAME	=	lib_arcade_SFML.so
 
-SRC	=	$(DIR_SRC)main.cpp \
+SRC	=	$(DIR_SRC)Sfml.cpp \
 
 OBJS	=	$(SRC:.cpp=.o)
 
-CXXFLAGS	+=	-Wall -Wextra -I$(DIR_INC) -I$(DIR_INT) -g
+CXXFLAGS	+=	-Wall -Wextra -I$(DIR_INC) -I$(DIR_INT) -g -fPIC
 
 all	:	$(OBJS)
 		gcc -shared -o $(NAME) $(OBJS) -lsfml-graphics -lsfml-window -lsfml-system -lncurses
