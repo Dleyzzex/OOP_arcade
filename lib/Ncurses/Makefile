@@ -6,20 +6,23 @@
 ##
 
 DIR_SRC	=	./src/
-DIR_INC	=	./include/
-DIR_INC	=	./lib/Ncurses/include
+DIR_INC	=	./include
+# DIR_INC	=	./lib/Ncurses/include
 
 NAME	=	lib_arcade_ncurses.so
 
 SRC		=	$(DIR_SRC)main.cpp \
+			$(DIR_SRC)Ncurses.cpp \
 
 OBJS	=	$(SRC:.cpp=.o)
 
-CXXFLAGS	+=	-Wall -Wextra -I$(DIR_INC) -I$(DIR_INT) -g
+CXXFLAGS	+=	-Wall -Wextra -I$(DIR_INC) -g
 
 all	:	$(OBJS)
-		gcc -shared -o $(NAME) $(OBJS) -lncurses
-		mv $(NAME) ../
+		g++ -o ncurses $(OBJS) -lncurses
+
+#		g++ -shared -o $(NAME) $(OBJS) -lncurses
+		#mv $(NAME) ../
 
 clean	:
 		@rm -f $(OBJS)
