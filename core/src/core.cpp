@@ -39,6 +39,7 @@ void core::launch(void)
     std::unique_ptr<IDisplayModule> &s = (*j->second.get()->getInstance("az"));
     s->open();
     s->update();
+    printf("ééé\n");
     while (s->isOpen()) {
         s->update();
         s->clear();

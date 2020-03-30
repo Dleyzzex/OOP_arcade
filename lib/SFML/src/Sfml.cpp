@@ -18,6 +18,7 @@ void Sfml::open()
 
     settings.antialiasingLevel = 8;
     this->window = std::make_unique<sf::RenderWindow>(sf::VideoMode(WIDTH, HEIGHT), "- Arkedia -", sf::Style::Default, settings);
+    printf("aaaa\n");
     setColor(DEFAULT);
     this->name = "sfml";
     this->font.loadFromFile("04B_30__.TTF");

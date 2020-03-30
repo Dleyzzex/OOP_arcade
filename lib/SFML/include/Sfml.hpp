@@ -27,7 +27,7 @@ public:
     // Reset the library
     void reset();
     //open / inits window
-    virtual void open();
+    void open();
     // Check if the window is open
     bool isOpen() const;
 

@@ -18,7 +18,7 @@ OBJS	=	$(SRC:.cpp=.o)
 CXXFLAGS	+=	-Wall -Wextra -I$(DIR_INC) -I$(DIR_INT) -g -fPIC
 
 all	:	$(OBJS)
-		gcc -shared -o $(NAME) $(OBJS) -lsfml-graphics -lsfml-window -lsfml-system -lncurses
+		g++ -shared -o $(NAME) $(OBJS) -lsfml-graphics -lsfml-window -lsfml-system
 		mv $(NAME) ../
 
 clean	:

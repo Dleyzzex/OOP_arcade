@@ -6,7 +6,7 @@
 ##
 
 DIR_INC =	./include/
-INC_ALL	=	-I $(DIR_INC)interface/ \
+INC_ALL	=	-I .$(DIR_INC)interface/ \
 			-I $(DIR_INC)tools/ \
 			-I $(DIR_INC)components/ \
 			-I $(DIR_INC)errors/ \
