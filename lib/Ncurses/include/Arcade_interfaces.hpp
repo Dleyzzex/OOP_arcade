@@ -72,6 +72,7 @@ class IDisplayModule {
         // Reset the library
         virtual void reset() = 0;
         // Check if the window is open
+        virtual void open() = 0;
         virtual bool isOpen() const = 0;
 
         // Handle switching libs & games (the names are explicit)
@@ -92,12 +93,12 @@ class IDisplayModule {
         virtual bool isKeyPressedOnce(IDisplayModule::Keys) const = 0;
         // Get the number of frames that passed between two calls to this function
         // The games should not be frame dependant!! That's why this is here.
-        virtual float getDelta() const = 0;
 
         // Handle Loop
         virtual void clear() const = 0;
         virtual void update() = 0;
         virtual void render() const = 0;
+        virtual float getDelta() const = 0;
         // You don't need all three of them, only one should be enough but we added the three of them
         // in case some of you want to seperate each step
         // Your core (or games) should nonetheless call all of these functions in this specific order :

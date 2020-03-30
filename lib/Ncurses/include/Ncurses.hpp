@@ -28,6 +28,7 @@
 
 class Ncurses : public IDisplayModule {
     private:
+        std::string  _name;
     public:
         Ncurses();
         ~Ncurses();
@@ -59,7 +60,6 @@ class Ncurses : public IDisplayModule {
         // Get the number of frames that passed between two calls to this function
         // The games should not be frame dependant!! That's why this is here.
         float getDelta() const;
-
         // // Handle Loop
         void clear() const;
         void update();
