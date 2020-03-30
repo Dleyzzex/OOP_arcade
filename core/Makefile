@@ -17,13 +17,17 @@ DIR_SRC	=	./src/
 NAME	=	arcade
 
 SRC		=	$(DIR_SRC)main.cpp \
+			$(DIR_SRC)error_gestion.cpp \
+			$(DIR_SRC)parser.cpp \
+			$(DIR_SRC)core.cpp \
 
 OBJS	=	$(SRC:.cpp=.o)
 
 CXXFLAGS	+= -Wall -Wextra -W $(INC_ALL)
 
 all		:	$(OBJS)
-			g++ -o $(NAME) $(OBJS)
+			g++ -o $(NAME) $(OBJS) -ldl
+			mv $(NAME) ../
 
 debug	:	$(OBJS)
 			g++ -g -o $(NAME) $(OBJS)
@@ -32,7 +36,7 @@ clean	:
 		@rm -f $(OBJS)
 
 fclean	:	clean
-		@rm -f $(NAME)
+		@rm -f ../$(NAME)
 
 re	:	fclean all
 
