@@ -4,13 +4,11 @@
 ** File description:
 ** core
 */
-
 #ifndef CORE_HPP_
 #define CORE_HPP_
 
 #include <iostream>
 #include <vector>
-#include<tuple>
 
 #define SAVE_PATH "games/.saves/"
 #define WIDTH 640
@@ -58,19 +56,20 @@ class IDisplayModule {
             W,
             X,
             SPACE,
-            ESCAPE,
             J,
             K,
             U,
             I,
-            M,
-            R,
+            ENTER,
+            BACKSPACE,
             KEYS_END
         };
 
         // For the core
         // Reset the library
         virtual void reset() = 0;
+        // Opens / inits the window
+        virtual void open() = 0;
         // Check if the window is open
         virtual bool isOpen() const = 0;
 
@@ -132,7 +131,6 @@ class IDisplayModule {
         // We chose not to display images because some library can't and it would cause other problems
         // You can still parse a file and display pixel art images by displaying pixels manually if you want.
 
-        // Strictly for debugging purposes, get the library's name (ncurses/sfm/sdl/libcaca etc etc)
         virtual const std::string &getLibName() const = 0;
 };
 
@@ -159,17 +157,17 @@ class IGameModule {
 
         // Set the player's name for the highscore
         virtual void setPlayerName(const std::string &name) = 0;
-        // get the best score
-        virtual std::tuple<std::string, int> getHighscore() const = 0;
+        // get the current score
+        virtual std::pair<std::string, int> getScore() const = 0;
         // get the 16 best scores
-        virtual std::vector<std::tuple<std::string, int>> getLatestScores() const = 0;
+        virtual std::vector<std::pair<std::string, int>> getBestScores() const = 0;
 
         // Handle Game
         // update game
-        virtual void update() = 0;
+        virtual void update(const IDisplayModule &lib) = 0;
         // display stuff using the lib given as an argument.
         virtual void render(IDisplayModule &lib) const = 0;
-        virtual const std::string &getGameName() const = 0;
+        virtual const std::string &getLibName() const = 0;
 };
 
 // Good luck and have fun.
