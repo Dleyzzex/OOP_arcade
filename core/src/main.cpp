@@ -16,8 +16,13 @@ int main(int ac, char **av)
 
     (void) ac;
     (void) av;
-    std::vector<std::string> libnames = get_filenames(libs);
-    std::vector<std::string> gamenames = get_filenames(libs);
+    // try {
+    //     checkErrors(ac, av);
+    // } catch(const std::exception& e) {
+    //     std::cerr << e.what() << '\n';
+    // }
+    std::vector<std::string> libnames = getFilenames(libs);
+    std::vector<std::string> gamenames = getFilenames(libs);
     Core = std::make_unique<core>(libnames, gamenames);
     return (0);
 }

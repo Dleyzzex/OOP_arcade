@@ -9,7 +9,7 @@
 #include <dirent.h>
 #include <vector>
 
-std::vector<std::string> get_filenames(std::string path)
+std::vector<std::string> getFilenames(std::string path)
 {
     DIR *dir = NULL;
     struct dirent *dirent = NULL;

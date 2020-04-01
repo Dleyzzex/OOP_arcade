@@ -5,7 +5,7 @@
 ** error_gestion
 */
 
-void check_errors(int ac, char **av)
+void checkErrors(int ac, char **av)
 {
     (void) av;
     if (ac < 2)

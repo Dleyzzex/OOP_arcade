@@ -25,7 +25,7 @@ public:
 private:
     // Hold the name and the ptr to a DLLoader
     std::map<std::string, std::unique_ptr<DLLoader<std::unique_ptr<IDisplayModule>>>> glibs;
-    std::map<std::string, std::unique_ptr<DLLoader<IGameModule>>> games;
+    std::map<std::string, std::unique_ptr<DLLoader<std::unique_ptr<IGameModule>>>> games;
     // Hold the name of each elements in /lib and /games
     std::vector<std::string> libnames;
     std::vector<std::string> gamenames;
@@ -35,7 +35,7 @@ private:
     void launch(void);
 };
 
-void check_errors(int ac, char **av);
-std::vector<std::string> get_filenames(std::string path);
+void checkErrors(int ac, char **av);
+std::vector<std::string> getFilenames(std::string path);
 
 #endif

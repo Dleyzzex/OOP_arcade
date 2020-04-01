@@ -305,7 +305,10 @@ void Ncurses::update(void)
 
 void Ncurses::render(IDisplayModule &lib) const
 {
-    ;
+    int key = lib.getKeyCode();
+
+    if (key == lib.LEFT)
+        printf("left");
 }
 
 std::vector<std::tuple<std::string, int>> Ncurses::getLatestScores() const

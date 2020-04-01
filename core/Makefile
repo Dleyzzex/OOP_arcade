@@ -23,7 +23,7 @@ SRC		=	$(DIR_SRC)main.cpp \
 
 OBJS	=	$(SRC:.cpp=.o)
 
-CXXFLAGS	+= -Wall -Wextra -W $(INC_ALL)
+CXXFLAGS	+= -Wall -Wextra -W $(INC_ALL) -g
 
 all		:	$(OBJS)
 			g++ -o $(NAME) $(OBJS) -ldl
