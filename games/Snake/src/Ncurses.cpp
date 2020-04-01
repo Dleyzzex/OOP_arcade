@@ -22,6 +22,7 @@ Ncurses::Ncurses()
     keypad(stdscr, TRUE);
     curs_set(0);
     timeout(100);
+    this->_name = "Snake";
     this->_Map = FillMyMap();
     this->_direction = 3;
     this->_can_go = TRUE;
@@ -237,6 +238,7 @@ void Ncurses::RemoveFood(void)
 void Ncurses::EndWindows(void)
 {
     endwin();
+    exit(0);
 }
 
 void Ncurses::ClearWindows(void)
@@ -283,27 +285,54 @@ void Ncurses::PrintGame(void)
     }
 }
 
-int Ncurses::Snake(int ac, char **av)
+void Ncurses::update(void)
 {
     //Initialisation de l'affichage en NCURSES
-    while (1) {
+    // while (1) {
         PrintGame(); //Print Game en NCURSES //FONCTION UPDATE
         this->_direction = GetMove(this->_direction); //FONCTION MOUVEMENT
         this->_can_go = CanMove(); //FONCTION UPDATE
         if (this->_can_go == FALSE)//FONCTION UPDATE
-            break;//FONCTION UPDATE
+            EndWindows();//FONCTION UPDATE
         Eat();//FONCTION UPDATE
         RemoveFood();//FONCTION UPDATE
         MoveSnake();//FONCTION UPDATE
         ClearWindows(); // Refresh + clear en NCURSES // FONCTION CLEAR
-    }
+    // }
     //Fin de Windows en NCURSES
-    return 0;
+    // return 0;
 }
 
-int main(int ac, char **av)
+void Ncurses::render(IDisplayModule &lib) const
 {
-    Ncurses N;
-    N.Snake(ac, av);
-    return (0);
+    ;
 }
+
+std::vector<std::tuple<std::string, int>> Ncurses::getLatestScores() const
+{
+    std::vector<std::tuple<std::string, int>> str;
+    return (str);
+}
+std::tuple<std::string, int> Ncurses::getHighscore() const
+{
+    std::tuple<std::string, int> str;
+    return str;
+}
+void Ncurses::setPlayerName(const std::string &name){;}
+void Ncurses::reset(){;}
+
+bool Ncurses::loadFromFile(const std::string &filepath){return true;}
+bool Ncurses::loadFromFile(){return true;}
+bool Ncurses::saveToFile(const std::string &filepath) const
+{return true;}
+bool Ncurses::saveToFile() const{return true;}
+
+const std::string &Ncurses::getGameName() const{
+    return (this->_name);
+}
+// int main(int ac, char **av)
+// {
+//     Ncurses N;
+//     N.Snake(ac, av);
+//     return (0);
+// }
