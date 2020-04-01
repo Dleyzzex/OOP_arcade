@@ -35,8 +35,13 @@ class DLLoader {
 
     T *getInstance(std::string path)
     {
+        //T (*function)(std::array<double, 1>);
         T* (*creator)();
 
+        if (!data) {
+            std::cerr << dlerror() << std::endl;
+            exit(84);
+        }
         (void) path;
         creator = (T* (*)())dlsym(this->data, "createLib");
         std::cout << std::endl;
