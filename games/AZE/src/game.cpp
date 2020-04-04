@@ -59,6 +59,7 @@ void game::setPlayerName(const std::string &name)
 
 void game::update(const IDisplayModule &lib)
 {
+    // update les valeurs des joueurs, du score, etc
 }
 
 void game::render(IDisplayModule &lib) const
@@ -66,9 +67,7 @@ void game::render(IDisplayModule &lib) const
     lib.update();
     lib.clear();
     lib.setColor(IDisplayModule::Colors::RED);
-    lib.putFillCircle(20, 20, 20);
-    lib.putFillRect(30,30,50,20);
-    lib.putText(name, 50, 100, 400);
+    lib.putFillCircle(20,20,20);
     lib.render();
 }
 

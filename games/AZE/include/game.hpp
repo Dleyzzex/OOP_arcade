@@ -16,7 +16,7 @@ class game : public IGameModule
 {
 private:
     std::string name;
-    std::pair<std::string, int> score;
+    std::pair<std::string, int> score; // nomdujoueur : score
     std::vector<std::pair<std::string, int>> bestScores;
 public:
     game();

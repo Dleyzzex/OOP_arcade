@@ -55,32 +55,32 @@ void core::launch(void)
 {
     lib = getLib(libnames.at(lIndex));
     game = getGame(gamenames.at(gIndex));
-    Menu = std::make_unique<menu>();
+    Menu = std::make_unique<menu>(libnames, gamenames);
 
     lib->open();
     while (lib->isOpen() == true) {
         this->isMenu = Menu->isOpen();
+        updateLib();
         if (isMenu == true) {
-            updateMenu();
-            Menu->render(*lib);
+           updateMenu();
         } else {
-            std::cout << "Game" << std::endl;
             playGame();
         }
-        updateLib();
     }
 }
 
 void core::playGame(void)
 {
+    std::cout << "Game" << std::endl;
     game->update(*lib);
     game->render(*lib);
 }
 
 void core::updateMenu(void)
 {
-    std::cout << "Menu" << std::endl;
+    // std::cout << "Menu" << std::endl;
     Menu->update(*lib, *game);
+    Menu->render(*lib);
 }
 
 void core::updateLib(void)
@@ -101,10 +101,12 @@ void core::updateLib(void)
     if (lib->shouldGoToMenu())
         Menu->setOpen(true);
     // Go to selected Game
-    if (lib->isKeyPressed(IDisplayModule::ENTER))
+    if (lib->isKeyPressedOnce(IDisplayModule::ENTER))
         Menu->setOpen(false);
+    // Exit Arcade
     if (lib->shouldExit())
         lib->close();
+    lib->update();
 }
 
 void core::changeLib(int direction)
