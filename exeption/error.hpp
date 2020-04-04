@@ -11,6 +11,6 @@ class error : std::exception
 {
 private:
 public:
-    error();
-    ~error();
+    ~error() = default;
+    virtual void what(char const *e) = 0;
 };

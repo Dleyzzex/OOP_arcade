@@ -11,6 +11,9 @@ core::core(std::vector<std::string> _libnames, std::vector<std::string> _gamenam
 {
     this->libnames = _libnames;
     this->gamenames = _gamenames;
+    this->lIndex = 0;
+    this->gIndex = 0;
+    this->isMenu = true;
     loadLib();
     loadGame();
     launch();
@@ -32,37 +35,102 @@ void core::loadGame(void)
         this->games[this->gamenames.at(i)] = std::make_unique<DLLoader<std::unique_ptr<IGameModule>>>(GAMES + this->gamenames.at(i));
 }
 
+std::unique_ptr<IDisplayModule> core::getLib(std::string str)
+{
+    std::map<std::string, std::unique_ptr<DLLoader<std::unique_ptr<IDisplayModule>>>>::iterator l = glibs.find(str);
+    std::unique_ptr<DLLoader<std::unique_ptr<IDisplayModule>>> &tmp = l->second;
+
+    return (tmp->getInstance(LIBS + str));
+}
+
+std::unique_ptr<IGameModule> core::getGame(std::string str)
+{
+    std::map<std::string, std::unique_ptr<DLLoader<std::unique_ptr<IGameModule>>>>::iterator g = games.find(str);
+    std::unique_ptr<DLLoader<std::unique_ptr<IGameModule>>> &tmp = g->second;
+
+    return (tmp->getInstance(GAMES + str));
+}
+
 void core::launch(void)
 {
-    std::map<std::string, std::unique_ptr<DLLoader<std::unique_ptr<IDisplayModule>>>>::iterator l = this->glibs.begin();
-    //std::map<std::string, std::unique_ptr<DLLoader<std::unique_ptr<IGameModule>>>>::iterator g = this->games.begin();
-    std::unique_ptr<IDisplayModule> &lib = (*l->second.get()->getInstance("Lib"));
-    // l->second.get()->getInstance("Lib");
-    //std::unique_ptr<IGameModule> &game = (*g->second.get()->getInstance("Game"));
-    //std::cout << lib->getLibName() << std::endl;
+    lib = getLib(libnames.at(lIndex));
+    game = getGame(gamenames.at(gIndex));
+    Menu = std::make_unique<menu>();
 
     lib->open();
-    lib->update();
-    while (lib->isOpen()) {
-        lib->clear();
-        lib->update();
-        // lib->setColor(IDisplayModule::Colors::BLUE);
-        // lib->putRect(10, 10, 40, 40);
-        // lib->setColor(IDisplayModule::Colors::GREEN);
-        // lib->putFillRect(100, 10, 10, 30);
-        // lib->setColor(IDisplayModule::Colors::YELLOW);
-        // lib->putPixel(200, 10);
-        // lib->setColor(IDisplayModule::Colors::RED);
-        // lib->putCircle(300, 300, 60);
-        // lib->setColor(IDisplayModule::Colors::MAGENTA);
-        // lib->putLine(100, 200, 100, 150);
-        // //if (lib->isKeyPressed(IDisplayModule::RIGHT))
-        lib->render();
+    while (lib->isOpen() == true) {
+        this->isMenu = Menu->isOpen();
+        if (isMenu == true) {
+            updateMenu();
+            Menu->render(*lib);
+        } else {
+            std::cout << "Game" << std::endl;
+            playGame();
+        }
+        updateLib();
     }
 }
 
-/*
-    MAP -> ne stocke que des DLLoader, lorsque le core appelle un circuit celui ci lui envoie loaderGame->GetInstance et loaderLib->GetInstance
-    Cela permet de conserver les dlloader afin de les close plus tard
-    --> Encapsulation
-*/
+void core::playGame(void)
+{
+    game->update(*lib);
+    game->render(*lib);
+}
+
+void core::updateMenu(void)
+{
+    std::cout << "Menu" << std::endl;
+    Menu->update(*lib, *game);
+}
+
+void core::updateLib(void)
+{
+    // Change Lib
+    if (lib->switchToPreviousLib())
+        changeLib(-1);
+    if (lib->switchToNextLib())
+        changeLib(1);
+    // Change Game
+    if (lib->switchToPreviousGame())
+        changeGame(-1);
+    if (lib->switchToNextGame())
+        changeGame(1);
+    // Manage Arcade
+    if (lib->shouldBeRestarted())
+        game->reset();
+    if (lib->shouldGoToMenu())
+        Menu->setOpen(true);
+    // Go to selected Game
+    if (lib->isKeyPressed(IDisplayModule::ENTER))
+        Menu->setOpen(false);
+    if (lib->shouldExit())
+        lib->close();
+}
+
+void core::changeLib(int direction)
+{
+    int index = this->lIndex + direction;
+
+    if (index < 0)
+        index = libnames.size();
+    if ((size_t)index > libnames.size() - 1)
+        index = 0;
+    this->lIndex = index;
+    this->lib->close();
+    this->lib = getLib(libnames.at(lIndex));
+    this->lib->open();
+    updateLib();
+}
+
+void core::changeGame(int direction)
+{
+    int index = this->gIndex + direction;
+
+    if (index < 0)
+        index = gamenames.size();
+    if ((size_t)index > gamenames.size() - 1)
+        index = 0;
+    this->gIndex = index;
+    this->game = getGame(gamenames.at(gIndex));
+    playGame();
+}

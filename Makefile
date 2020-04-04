@@ -7,9 +7,9 @@
 
 all		:
 		# make -C ./lib/Ncurses
-		# make -C ./lib/SFML
+		make -C ./lib/SFML
 		make -C ./lib/SDL
-		# make -C ./games/Snake
+		make -C ./games/AZE
 		make -C ./core
 
 core	:
@@ -20,15 +20,15 @@ games	:
 
 graphicals	:
 		# make -C ./lib/Ncurses
-		# make -C ./lib/SFML
+		make -C ./lib/SFML
 		make -C ./lib/SDL
 
 fclean	:
 		make fclean -C ./core/
 		# make fclean -C ./lib/Ncurses
-		# make fclean -C ./lib/SFML
+		make fclean -C ./lib/SFML
 		make fclean -C ./lib/SDL
-		make fclean -C ./games/Snake
+		make fclean -C ./games/AZE
 
 re	:	fclean all
 

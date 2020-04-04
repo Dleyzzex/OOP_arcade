@@ -10,9 +10,11 @@ INC_ALL	=	-I .$(DIR_INC)interface/ \
 			-I $(DIR_INC)tools/ \
 			-I $(DIR_INC)components/ \
 			-I $(DIR_INC)errors/ \
+			-I $(DIR_INC)menu/ \
 			-I $(DIR_INC) \
 
 DIR_SRC	=	./src/
+DIR_MEN = 	./src/menu/
 
 NAME	=	arcade
 
@@ -20,10 +22,11 @@ SRC		=	$(DIR_SRC)main.cpp \
 			$(DIR_SRC)error_gestion.cpp \
 			$(DIR_SRC)parser.cpp \
 			$(DIR_SRC)core.cpp \
+			$(DIR_MEN)menu.cpp \
 
 OBJS	=	$(SRC:.cpp=.o)
 
-CXXFLAGS	+= -Wall -Wextra -W $(INC_ALL) -g
+CXXFLAGS	+= -Wall -Wextra -W $(INC_ALL) $(DIR_INT) -g
 
 all		:	$(OBJS)
 			g++ -o $(NAME) $(OBJS) -ldl

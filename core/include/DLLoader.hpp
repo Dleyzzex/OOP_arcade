@@ -24,7 +24,7 @@ class DLLoader {
 
     DLLoader(std::string path)
     {
-        this->data = dlopen(path.c_str(), RTLD_LOCAL | RTLD_LAZY);
+        this->data = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
     }
 
     ~DLLoader()
@@ -33,18 +33,18 @@ class DLLoader {
             dlclose(data);
     }
 
-    T *getInstance(std::string path)
+    T getInstance(std::string path)
     {
-        //T (*function)(std::array<double, 1>);
-        T* (*creator)();
+        T (*creator)();
 
         if (!data) {
-            std::cerr << dlerror() << std::endl;
-            exit(84);
+            this->data = dlopen(path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+            if (!data) {
+                std::cerr << dlerror() << std::endl;
+                exit(84);
+            }
         }
-        (void) path;
-        creator = (T* (*)())dlsym(this->data, "createLib");
-        std::cout << std::endl;
+        creator = (T (*)())dlsym(this->data, "createLib");
         return ((creator)());
     }
 
@@ -53,27 +53,5 @@ class DLLoader {
     int *iptr;
     int (*fptr)(int);
 };
-
-/*
-T* (*creator)();
-
-(void) path;
-creator = (T* (*)())dlsym(this->data, "createLib");
-        return ((*creator)());
-
-
-
-void    *handle;
-int     *iptr, (*fptr)(int);
-
-/* open the needed object */
-//handle = dlopen("/usr/home/me/libfoo.so", RTLD_LOCAL | RTLD_LAZY);
-
-/* find the address of function and data objects */
-//fptr = (int (*)(int))dlsym(handle, "my_function");
-//iptr = (int *)dlsym(handle, "my_object");
-
-/* invoke function, passing value of integer as a parameter */
-//(*fptr)(*iptr);
 
 #endif
