@@ -23,10 +23,6 @@ int main(int ac, char **av)
     // }
     std::vector<std::string> libnames = getFilenames(libs);
     std::vector<std::string> gamenames = getFilenames(games);
-    for (size_t i = 0; i < gamenames.size(); i++)
-        std::cout << gamenames.at(i) << std::endl;
-    for (size_t i = 0; i < libnames.size(); i++)
-        std::cout << libnames.at(i) << std::endl;
     Core = std::make_unique<core>(libnames, gamenames);
     return (0);
 }
