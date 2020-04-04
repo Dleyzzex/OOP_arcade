@@ -63,6 +63,7 @@ class Ncurses : public IDisplayModule {
         // // Handle Loop
         void clear() const;
         void update();
+        void close();
         void render() const;
         // // You don't need all three of them, only one should be enough but we added the three of them
         // in case some of you want to seperate each step

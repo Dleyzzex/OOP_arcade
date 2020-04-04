@@ -10,6 +10,9 @@
 Ncurses::Ncurses(){}
 
 Ncurses::~Ncurses()
+{}
+
+void Ncurses::close()
 {
     endwin();
 }
@@ -301,4 +304,9 @@ void Ncurses::putText(const std::string &text, unsigned int size, float x, float
 const std::string &Ncurses::getLibName() const
 {
     return (this->_name);
+}
+
+extern "C" std::unique_ptr<IDisplayModule> createLib(void)
+{
+    return (std::make_unique<Ncurses>());
 }
