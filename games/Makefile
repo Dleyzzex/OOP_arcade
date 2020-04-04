@@ -12,7 +12,7 @@ DIR_INT = 	./lib/SFML/include
 NAME	=	lib_arcade_nibbler.so
 NAMES	=	lib_arcade_pacman.so
 
-SRC		=	$(DIR_SRC)Ncurses.cpp
+SRC		=	$(DIR_SRC)Snake.cpp
 OBJS	=	$(SRC:.cpp=.o)
 
 SRCS	=	$(DIR_SRC)Pacman.cpp
@@ -22,9 +22,7 @@ CXXFLAGS	+=	-Wall -Wextra -I$(DIR_INC) -I$(DIR_INT) -g -fPIC
 
 all	:	$(OBJS)
 		gcc -shared -o $(NAME) $(OBJS) -lncurses $(CXXFLAGS)
-		#mv $(NAME) ../
 		g++ -shared -o $(NAMES) $(DIR_SRC)Pacman.cpp $(CXXFLAGS) -lncurses
-		#mv $(NAMES) ../
 
 clean	:
 		@rm -f $(OBJS)

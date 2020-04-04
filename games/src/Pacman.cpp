@@ -113,9 +113,8 @@ int Pacman::GetMove(int _direction)
     }
 }
 
-void Pacman::update()
+void Pacman::update(const IDisplayModule &lib)
 {
-    clear();
     Moving();
     this->_direction = GetMove(this->_direction); //FONCTION MOUVEMENT
     this->_can_go = doesittouch(); //FONCTION UPDATE
@@ -127,11 +126,9 @@ void Pacman::update()
     if (this->_can_move == TRUE)
         MovePacman();
     gain_coin();
-    my_print(); //affichage
-    refresh();
 }
 
-void Pacman::my_print(void)
+void Pacman::render(IDisplayModule &lib)
 {
     std::vector<std::string> _MapTmp = this->_Map;
     for (long unsigned int i = 1; i != this->_Food.size(); i++)
@@ -149,18 +146,18 @@ void Pacman::my_print(void)
         _MapTmp[this->_Pacman.first][this->_Pacman.second] = 'C';
         this->_powerup--;
     }
-    for (size_t i = 0; i != _MapTmp.size(); i++) {
-        for (size_t j = 0; j != _MapTmp[i].size(); j++) {
+    size_t i = 0;
+    size_t j = 0;
+    for (i = 0; i != _MapTmp.size(); i++) {
+        for (j = 0; j != _MapTmp[i].size(); j++) {
             std::string str(1, _MapTmp[i][j]);
-            printw(str.c_str());
-            //witch_color(str);
-            //std::cout << _MapTmp[i][j];
+            lib.putText(str, j*16, i*8);
         }
     }
     int jo = 95 - _FoodRemaining;
     std::string tmpp = std::to_string(jo);
     tmpp + "\n";
-    printw(tmpp.c_str());
+    lib.putText(tmpp, j*18, i*8);
     // for (long unsigned int i = 0; i != this->_Map.size(); i++)
     //     std::cout << _MapTmp[i];
 }
