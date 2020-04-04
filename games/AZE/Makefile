@@ -6,6 +6,7 @@
 ##
 
 DIR_SRC	=	./src/
+DIR_INT	=	../../include/interface/
 DIR_INC	=	./include/
 
 NAME	=	lib_arcade_game.so
