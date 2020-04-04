@@ -20,11 +20,14 @@ void Sdl::reset()
 void Sdl::open()
 {
     this->name = "Sdl";
+    printf("aaaa\n");
     SDL_Init(SDL_INIT_EVERYTHING);
     TTF_Init();
     SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &this->window, &this->renderer);
     this->clos = false;
     setColor(DEFAULT);
+    memset(this->prevKey, 0, sizeof(Uint8)*SDL_NUM_SCANCODES);
+    memcpy(this->CurrentKey, SDL_GetKeyboardState(NULL), sizeof(Uint8)*SDL_NUM_SCANCODES);
 }
 // Check if the window is open
 void Sdl::close()
@@ -54,28 +57,28 @@ bool Sdl::isOpen() const
 // The keys enum only lists keys used by games, not special keys to switch libraries.
 bool Sdl::switchToNextLib() const
 {
-    if (this->isKeyPressed(IDisplayModule::UP))
+    if (this->isKeyPressedOnce(IDisplayModule::UP))
         return true;
     return false;
 }
 
 bool Sdl::switchToPreviousLib() const
 {
-    if (this->isKeyPressed(IDisplayModule::DOWN))
+    if (this->isKeyPressedOnce(IDisplayModule::DOWN))
         return true;
     return false;
 }
 
 bool Sdl::switchToNextGame() const
 {
-    if (this->isKeyPressed(IDisplayModule::RIGHT))
+    if (this->isKeyPressedOnce(IDisplayModule::RIGHT))
         return true;
     return false;
 }
 
 bool Sdl::switchToPreviousGame() const
 {
-    if (this->isKeyPressed(IDisplayModule::LEFT))
+    if (this->isKeyPressedOnce(IDisplayModule::LEFT))
         return true;
     return false;
 }
@@ -83,49 +86,49 @@ bool Sdl::switchToPreviousGame() const
 // From the pdf
 bool Sdl::shouldBeRestarted() const
 {
-    if (this->isKeyPressed(IDisplayModule::X))
+    if (this->isKeyPressedOnce(IDisplayModule::X))
         return true;
     return false;
 }
 
 bool Sdl::shouldGoToMenu() const
 {
-    if (this->isKeyPressed(IDisplayModule::W))
+    if (this->isKeyPressedOnce(IDisplayModule::W))
         return true;
     return false;
 }
 
 bool Sdl::shouldExit() const
 {
-    if (this->isKeyPressed(IDisplayModule::BACKSPACE))
+    if (this->isKeyPressedOnce(IDisplayModule::BACKSPACE))
         return true;
     return false;
 }
 
 // Handle Inputs & Events
 
-bool Sdl::KeySet(IDisplayModule::Keys key) const
+bool Sdl::KeySet(IDisplayModule::Keys key, const Uint8 *state) const
 {
     switch (key) {
-        case LEFT: if (this->event.key.keysym.sym == SDLK_LEFT) { return true; }             break;
-        case RIGHT: if (this->event.key.keysym.sym == SDLK_RIGHT) { return true; }           break;
-        case UP: if (this->event.key.keysym.sym == SDLK_UP) { return true; }                 break;
-        case DOWN: if (this->event.key.keysym.sym == SDLK_DOWN) { return true; }             break;
-        case Z: if (this->event.key.keysym.sym == SDLK_z) { return true; }                   break;
-        case Q: if (this->event.key.keysym.sym == SDLK_q) { return true; }                   break;
-        case S: if (this->event.key.keysym.sym == SDLK_s) { return true; }                   break;
-        case D: if (this->event.key.keysym.sym == SDLK_d) { return true; }                   break;
-        case A: if (this->event.key.keysym.sym == SDLK_a) { return true; }                   break;
-        case E: if (this->event.key.keysym.sym == SDLK_e) { return true; }                   break;
-        case W: if (this->event.key.keysym.sym == SDLK_w) { return true; }                   break;
-        case X: if (this->event.key.keysym.sym == SDLK_x) { return true; }                   break;
-        case SPACE: if (this->event.key.keysym.sym == SDLK_SPACE) { return true; }           break;
-        case J: if (this->event.key.keysym.sym == SDLK_j) { return true; }                   break;
-        case K: if (this->event.key.keysym.sym == SDLK_k) { return true; }                   break;
-        case U: if (this->event.key.keysym.sym == SDLK_u) { return true; }                   break;
-        case I: if (this->event.key.keysym.sym == SDLK_i) { return true; }                   break;
-        case ENTER: if (this->event.key.keysym.sym == SDLK_RETURN) { return true; }          break;
-        case BACKSPACE: if (this->event.key.keysym.sym == SDLK_BACKSPACE) { return true; }   break;
+        case LEFT: return state[SDL_SCANCODE_LEFT];
+        case RIGHT: return state[SDL_SCANCODE_RIGHT];
+        case UP: return state[SDL_SCANCODE_UP];
+        case DOWN: return state[SDL_SCANCODE_DOWN];
+        case Z: return state[SDL_SCANCODE_W];
+        case Q: return state[SDL_SCANCODE_A];
+        case S: return state[SDL_SCANCODE_S];
+        case D: return state[SDL_SCANCODE_D];
+        case A: return state[SDL_SCANCODE_Q];
+        case E: return state[SDL_SCANCODE_E];
+        case W: return state[SDL_SCANCODE_Z];
+        case X: return state[SDL_SCANCODE_X];
+        case SPACE: return state[SDL_SCANCODE_SPACE];
+        case J: return state[SDL_SCANCODE_J];
+        case K: return state[SDL_SCANCODE_K];
+        case U: return state[SDL_SCANCODE_U];
+        case I: return state[SDL_SCANCODE_I];
+        case ENTER: return state[SDL_SCANCODE_RETURN];
+        case BACKSPACE: return state[SDL_SCANCODE_BACKSPACE];
         case KEYS_END: return false;
     }
     return false;
@@ -133,16 +136,14 @@ bool Sdl::KeySet(IDisplayModule::Keys key) const
 
 bool Sdl::isKeyPressed(IDisplayModule::Keys key) const
 {
-    if (this->event.type != SDL_KEYDOWN)
-        return false;
-    return KeySet(key);
+    return KeySet(key, this->CurrentKey);
 }
 
 bool Sdl::isKeyPressedOnce(IDisplayModule::Keys key) const
 {
-    if (this->event.type != SDL_KEYUP)
-        return false;
-    return KeySet(key);
+    if (KeySet(key, this->CurrentKey) == true && KeySet(key, this->prevKey) == false)
+        return true;
+    return false;
 }
 // Get the number of frames that passed between two calls to this function
 // The games should not be frame dependant!! That's why this is here.
@@ -162,9 +163,12 @@ void Sdl::update()
 {
     Uint32 current = SDL_GetTicks();
 
+    printf("sdl\n");
     this->timeRange += (Uint32)(1000 / 60);
     if (current < timeRange)
         SDL_Delay(timeRange - current);
+    memcpy(this->prevKey, this->CurrentKey, sizeof(Uint8)*SDL_NUM_SCANCODES);
+    memcpy(this->CurrentKey, SDL_GetKeyboardState(NULL), sizeof(Uint8)*SDL_NUM_SCANCODES);
     SDL_PollEvent(&this->event);
     if (this->event.type == SDL_QUIT)
         this->clos = true;
@@ -246,8 +250,11 @@ void Sdl::putFillRect(float x, float y, float w, float h) const
 // Display an empty circle
 void Sdl::putCircle(float x, float y, float rad) const
 {
+
     static const double PI = 3.1415926535;
     double x1, y1;
+    x += rad;
+    y += rad;
 
     for(double i = 0; i < 360; i += 0.1) {
         x1 = rad * cos(i * PI / 180);
@@ -258,6 +265,8 @@ void Sdl::putCircle(float x, float y, float rad) const
 // Display a full circle
 void Sdl::putFillCircle(float x, float y, float rad) const
 {
+    x += rad;
+    y += rad;
     int h = 0;
     for (int x1 = -rad; x1 < rad ; x1++) {
         h = (int)sqrt(rad * rad - pow(x1, 2));
@@ -270,7 +279,7 @@ void Sdl::putText(const std::string &text, unsigned int size, float x, float y) 
 {
     SDL_Color color;
     SDL_Rect pos{(int)x, (int)y, 0, 0};
-    TTF_Font *font = TTF_OpenFont("../../include/tools/04B_30__.TTF", size);
+    TTF_Font *font = TTF_OpenFont("../../assets/arial.ttf", size);
 
     SDL_GetRenderDrawColor(this->renderer, &color.r, &color.g, &color.b, &color.a);
     SDL_Surface *texte = TTF_RenderText_Solid(font, text.c_str(), color);

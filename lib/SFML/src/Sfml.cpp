@@ -25,7 +25,7 @@ void Sfml::open()
     setColor(DEFAULT);
     this->name = "Sfml";
     this->window->setFramerateLimit(60);
-    this->font.loadFromFile("./assets/arial.ttf");
+    this->font.loadFromFile("../../assets/arial.ttf");
 }
 // Check if the window is open
 
@@ -46,28 +46,28 @@ bool Sfml::isOpen() const
 // The keys enum only lists keys used by games, not special keys to switch libraries.
 bool Sfml::switchToNextLib() const
 {
-    if (this->isKeyPressed(IDisplayModule::UP))
+    if (this->isKeyPressedOnce(IDisplayModule::UP))
         return true;
     return false;
 }
 
 bool Sfml::switchToPreviousLib() const
 {
-    if (this->isKeyPressed(IDisplayModule::DOWN))
+    if (this->isKeyPressedOnce(IDisplayModule::DOWN))
         return true;
     return false;
 }
 
 bool Sfml::switchToNextGame() const
 {
-    if (this->isKeyPressed(IDisplayModule::RIGHT))
+    if (this->isKeyPressedOnce(IDisplayModule::RIGHT))
         return true;
     return false;
 }
 
 bool Sfml::switchToPreviousGame() const
 {
-    if (this->isKeyPressed(IDisplayModule::LEFT))
+    if (this->isKeyPressedOnce(IDisplayModule::LEFT))
         return true;
     return false;
 }
@@ -75,21 +75,21 @@ bool Sfml::switchToPreviousGame() const
 // From the pdf
 bool Sfml::shouldBeRestarted() const
 {
-    if (this->isKeyPressed(IDisplayModule::X))
+    if (this->isKeyPressedOnce(IDisplayModule::X))
         return true;
     return false;
 }
 
 bool Sfml::shouldGoToMenu() const
 {
-    if (this->isKeyPressed(IDisplayModule::W))
+    if (this->isKeyPressedOnce(IDisplayModule::W))
         return true;
     return false;
 }
 
 bool Sfml::shouldExit() const
 {
-    if (this->isKeyPressed(IDisplayModule::BACKSPACE))
+    if (this->isKeyPressedOnce(IDisplayModule::BACKSPACE))
         return true;
     return false;
 }
@@ -125,16 +125,17 @@ bool Sfml::KeySet(IDisplayModule::Keys key) const
 
 bool Sfml::isKeyPressed(IDisplayModule::Keys key) const
 {
-    if (event.type != sf::Event::KeyPressed)
-        return false;
-    return KeySet(key);
+    if (CurrentKey == 1 && KeySet(key))
+        return true;
+    return false;
 }
 
 bool Sfml::isKeyPressedOnce(IDisplayModule::Keys key) const
 {
-    if (event.type != sf::Event::KeyReleased)
-        return false;
-    return KeySet(key);
+
+    if ((this->CurrentKey == 1 && KeySet(key)) && this->prevKey == 0)
+        return true;
+    return false;
 }
 // Get the number of frames that passed between two calls to this function
 // The games should not be frame dependant!! That's why this is here.
@@ -151,9 +152,15 @@ void Sfml::clear() const
 
 void Sfml::update()
 {
+    printf("sfml\n");
     if (this->window->pollEvent(this->event)) {
         if (this->event.type == sf::Event::Closed)
             this->window->close();
+        this->prevKey = this->CurrentKey;
+        if (this->event.type == sf::Event::KeyReleased)
+            this->CurrentKey = 0;
+        if (this->event.type == sf::Event::KeyPressed)
+            this->CurrentKey = 1;
         if (this->event.type == sf::Event::TextEntered)
             if (this->event.text.unicode < 128)
                 this->lastKey = static_cast<char>(this->event.text.unicode);

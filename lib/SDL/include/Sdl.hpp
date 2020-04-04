@@ -24,7 +24,9 @@ private:
     TTF_Font *font = NULL;
     Uint32 timeRange = 0;
     SDL_Event event;
-    bool KeySet(IDisplayModule::Keys) const;
+    Uint8 prevKey[SDL_NUM_SCANCODES];
+    Uint8 CurrentKey[SDL_NUM_SCANCODES];
+    bool KeySet(IDisplayModule::Keys,  const Uint8 *) const;
 public:
     Sdl();
     // For the core

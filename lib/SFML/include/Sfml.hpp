@@ -19,6 +19,8 @@ private:
     sf::Color color;
     sf::Font font;
     char lastKey;
+    bool CurrentKey = false;
+    bool prevKey = false;
     sf::Event event;
     bool KeySet(IDisplayModule::Keys) const;
 public:
