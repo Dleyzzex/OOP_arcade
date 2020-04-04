@@ -5,32 +5,36 @@
 ** [enter description here]
 */
 
-#ifndef SFML_HPP_
-#define SFML_HPP_
+#ifndef SDL_HPP_
+#define SDL_HPP_
 
 #include "Arcade_interfaces.hpp"
-#include <SFML/Graphics.hpp>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <memory>
+#include <math.h>
 
-class Sfml : public IDisplayModule {
+class Sdl : public IDisplayModule {
 private:
     std::string name;
-    std::unique_ptr<sf::RenderWindow> window;
-    sf::Color color;
-    sf::Font font;
+    SDL_Window  *window = NULL;
+    SDL_Renderer *renderer = NULL;
     char lastKey;
-    sf::Event event;
+    bool clos;
+    TTF_Font *font = NULL;
+    Uint32 timeRange = 0;
+    SDL_Event event;
     bool KeySet(IDisplayModule::Keys) const;
 public:
-    Sfml();
+    Sdl();
     // For the core
     // Reset the library
     void reset();
     //open / inits window
     void open();
-    // Check if the window is open
-    void close();
 
+    void close();
+    // Check if the window is open
     bool isOpen() const;
 
     // Handle switching libs & games (the names are explicit)
@@ -95,4 +99,4 @@ public:
     const std::string &getLibName() const;
 };
 
-#endif /*SFML_HPP_*/
+#endif /*SDL_HPP_*/

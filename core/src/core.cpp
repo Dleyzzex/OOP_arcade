@@ -46,17 +46,17 @@ void core::launch(void)
     while (lib->isOpen()) {
         lib->clear();
         lib->update();
-        lib->setColor(IDisplayModule::Colors::BLUE);
-        lib->putRect(10, 10, 40, 40);
-        lib->setColor(IDisplayModule::Colors::GREEN);
-        lib->putFillRect(100, 10, 10, 30);
-        lib->setColor(IDisplayModule::Colors::YELLOW);
-        lib->putPixel(200, 10);
-        lib->setColor(IDisplayModule::Colors::RED);
-        lib->putCircle(300, 300, 60);
-        lib->setColor(IDisplayModule::Colors::MAGENTA);
-        lib->putLine(100, 200, 100, 150);
-        //if (lib->isKeyPressed(IDisplayModule::RIGHT))
+        // lib->setColor(IDisplayModule::Colors::BLUE);
+        // lib->putRect(10, 10, 40, 40);
+        // lib->setColor(IDisplayModule::Colors::GREEN);
+        // lib->putFillRect(100, 10, 10, 30);
+        // lib->setColor(IDisplayModule::Colors::YELLOW);
+        // lib->putPixel(200, 10);
+        // lib->setColor(IDisplayModule::Colors::RED);
+        // lib->putCircle(300, 300, 60);
+        // lib->setColor(IDisplayModule::Colors::MAGENTA);
+        // lib->putLine(100, 200, 100, 150);
+        // //if (lib->isKeyPressed(IDisplayModule::RIGHT))
         lib->render();
     }
 }

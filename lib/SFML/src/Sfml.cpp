@@ -10,7 +10,11 @@
 Sfml::Sfml() {}
 // For the core
 // Reset the library
-void Sfml::reset() {}
+void Sfml::reset()
+{
+    this->clear();
+    setColor(DEFAULT);
+}
 
 void Sfml::open()
 {
@@ -18,12 +22,19 @@ void Sfml::open()
 
     settings.antialiasingLevel = 8;
     this->window = std::make_unique<sf::RenderWindow>(sf::VideoMode(WIDTH, HEIGHT), "- Arkedia -", sf::Style::Default, settings);
-    printf("aaaa\n");
     setColor(DEFAULT);
-    this->name = "sfml";
-    this->font.loadFromFile("04B_30__.TTF");
+    this->name = "Sfml";
+    this->window->setFramerateLimit(60);
+    this->font.loadFromFile("../../include/tools/04B_30__.TTF");
 }
 // Check if the window is open
+
+void Sfml::close()
+{
+    setColor(DEFAULT);
+    if (this->isOpen())
+        this->window->close();
+}
 
 bool Sfml::isOpen() const
 {
@@ -194,7 +205,6 @@ void Sfml::setColor(IDisplayModule::Colors col)
         case LIGHT_CYAN:    this->color = sf::Color(102, 255, 255, 255);    break;
         case COLORS_END:    this->color = sf::Color::Black;                 break;
     }
-    return ;
 }
 // Display a pixel
 void Sfml::putPixel(float x, float y) const
