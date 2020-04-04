@@ -35,14 +35,11 @@ class Pacman : public IGameModule{
         void InitGhost(void);
         void InitFood(void);
         void InitPacman(void);
-        void my_print(void);
-        void witch_color(std::string str);
         void Moving(void);
         void nb_zero(int i);
         void nb_one(int i);
         void nb_two(int i);
         void nb_three(int i);
-        int GetMove(int _direction);
         bool CanMove(void);
         bool doesittouch();
         void MovePacman(void);
@@ -70,12 +67,13 @@ class Pacman : public IGameModule{
 
         // Handle Game
         // update game
-        void update();
+        void update(const IDisplayModule &lib);
         // display stuff using the lib given as an argument.
         void render(IDisplayModule &lib) const;
         const std::string &getGameName() const;
     protected:
     private:
+        std::vector<std::string> _MapTmp;
         int _FoodRemaining;
         int _LifeRemaining;
         std::vector<std::string> _Map;
@@ -88,6 +86,7 @@ class Pacman : public IGameModule{
         bool _can_go;
         bool _can_move;
         std::string _name;
+        std::string _Score;
 };
 char *  itoa ( int value, char * str, int base );
 

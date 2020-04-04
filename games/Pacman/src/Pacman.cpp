@@ -62,102 +62,74 @@ void Pacman::InitGhost(void)
     this->_Ghost.insert({4, {4, 13}});
 }
 
-void Pacman::witch_color(std::string str)
-{
-    if (str == "#") {
-        init_pair(2, COLOR_WHITE, COLOR_BLACK);
-        attron(COLOR_PAIR(2));
-        printw(str.c_str());
-    }
-    else if (str == "c" || str == "C") {
-        init_pair(3, COLOR_GREEN, COLOR_BLACK);
-        attron(COLOR_PAIR(3));
-        printw(str.c_str());
-    }
-    else if (str == "W") {
-        init_pair(4, COLOR_RED, COLOR_BLACK);
-        attron(COLOR_PAIR(4));
-        printw(str.c_str());
-    }
-    else
-        printw(str.c_str());
-}
-
-
-int Pacman::GetMove(int _direction)
-{
-    int ch = getch();
-    switch (ch) {
-        case KEY_LEFT:
-            if (_direction != 1)
-                return 2;
-            else
-                return (0);
-        case KEY_RIGHT:
-            if (_direction != 2)
-                return 1;
-            else
-                return (0);
-        case KEY_DOWN:
-            if (_direction != 3)
-                return 4;
-            else
-                return (0);
-        case KEY_UP:
-            if (_direction != 4)
-                return 3;
-            else
-                return (0);
-        default:
-            return 0;
-    }
-}
-
 void Pacman::update(const IDisplayModule &lib)
 {
     Moving();
-    this->_direction = GetMove(this->_direction); //FONCTION MOUVEMENT
-    this->_can_go = doesittouch(); //FONCTION UPDATE
-    if (this->_can_go == FALSE) {//FONCTION UPDATE
-        endwin();
-        exit(0);
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::LEFT)) {
+        if (this->_direction != 1)
+            this->_direction = 2;
+        else
+            this->_direction = 0;
     }
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::RIGHT)) {
+        if (this->_direction != 1)
+            this->_direction = 2;
+        else
+            this->_direction = 0;
+    }
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::DOWN)) {
+        if (this->_direction != 1)
+            this->_direction = 2;
+        else
+            this->_direction = 0;
+    }
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::UP)) {
+        if (this->_direction != 1)
+            this->_direction = 2;
+        else
+            this->_direction = 0;
+    }
+    this->_can_go = doesittouch(); //FONCTION UPDATE
+    if (this->_can_go == FALSE)//FONCTION UPDATE
+        exit(0);
     this->_can_move = CanMove();
     if (this->_can_move == TRUE)
         MovePacman();
     gain_coin();
-}
-
-void Pacman::render(IDisplayModule &lib)
-{
-    std::vector<std::string> _MapTmp = this->_Map;
-    for (long unsigned int i = 1; i != this->_Food.size(); i++)
-        if (this->_Food.at(i).first > 0)
-           _MapTmp[this->_Food.at(i).first][this->_Food.at(i).second] = '.';
-    for (long unsigned int i = 1; i < this->_SuperFood.size() + 1; i++)
-        if (this->_SuperFood.at(i).first > 0)
-           _MapTmp[this->_SuperFood.at(i).first][this->_SuperFood.at(i).second] = '*';
-    for (long unsigned int i = 1; i != this->_Ghost.size() + 1; i++)
-        if (this->_Ghost.at(i).first > 0)
-           _MapTmp[this->_Ghost.at(i).first][this->_Ghost.at(i).second] = 'W';
     if (this->_powerup == 0)
         _MapTmp[this->_Pacman.first][this->_Pacman.second] = 'c';
     else {
         _MapTmp[this->_Pacman.first][this->_Pacman.second] = 'C';
         this->_powerup--;
     }
-    size_t i = 0;
-    size_t j = 0;
-    for (i = 0; i != _MapTmp.size(); i++) {
-        for (j = 0; j != _MapTmp[i].size(); j++) {
+    this->_MapTmp = this->_Map;
+    for (long unsigned int i = 1; i != this->_Food.size(); i++)
+        if (this->_Food.at(i).first > 0)
+           this->_MapTmp[this->_Food.at(i).first][this->_Food.at(i).second] = '.';
+    for (long unsigned int i = 1; i < this->_SuperFood.size() + 1; i++)
+        if (this->_SuperFood.at(i).first > 0)
+           this->_MapTmp[this->_SuperFood.at(i).first][this->_SuperFood.at(i).second] = '*';
+    for (long unsigned int i = 1; i != this->_Ghost.size() + 1; i++)
+        if (this->_Ghost.at(i).first > 0)
+           this->_MapTmp[this->_Ghost.at(i).first][this->_Ghost.at(i).second] = 'W';
+    int jo = 95 - _FoodRemaining;
+    this->_Score = std::to_string(jo);
+    this->_Score + "\n";
+}
+
+
+void Pacman::render(IDisplayModule &lib) const
+{
+    float i = 0;
+    float j = 0;
+
+    for (i = 0; i != this->_MapTmp.size(); i++) {
+        for (j = 0; j != this->_MapTmp[i].size(); j++) {
             std::string str(1, _MapTmp[i][j]);
-            lib.putText(str, j*16, i*8);
+            lib.putText(str, 1, j*16, i*8);
         }
     }
-    int jo = 95 - _FoodRemaining;
-    std::string tmpp = std::to_string(jo);
-    tmpp + "\n";
-    lib.putText(tmpp, j*18, i*8);
+    lib.putText(this->_Score, 1, j*18, i*8);
     // for (long unsigned int i = 0; i != this->_Map.size(); i++)
     //     std::cout << _MapTmp[i];
 }
@@ -316,19 +288,6 @@ void Pacman::MovePacman(void)
 
 Pacman::Pacman()
 {
-    initscr();
-    if(has_colors() == FALSE)
-    {
-        endwin();
-        printf("Your terminal does not support color\n");
-        exit(1);
-    }
-    start_color();
-    cbreak();
-    noecho();
-    keypad(stdscr, TRUE);
-    curs_set(0);
-    timeout(100);
     this->_powerup = 0;
     this->_can_go = TRUE;
     this->_can_move = TRUE;
@@ -344,5 +303,4 @@ Pacman::Pacman()
 
 Pacman::~Pacman()
 {
-    endwin();
 }

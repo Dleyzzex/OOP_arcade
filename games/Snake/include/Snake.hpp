@@ -1,12 +1,12 @@
 /*
 ** EPITECH PROJECT, 2020
-** Ncurses.hpp
+** Snake.hpp
 ** File description:
-** Class lib Ncurses
+** Class lib Snake
 */
 
-#ifndef NCURSES_HPP_
-#define NCURSES_HPP_
+#ifndef SNAKE_HPP_
+#define SNAKE_HPP_
 
 #include <ncurses.h>
 #include <cstdlib>
@@ -23,13 +23,10 @@
 #include <bits/stdc++.h>
 #include <Arcade_interfaces.hpp>
 
-class Ncurses : public IGameModule {
+class Snake : public IGameModule {
     public:
-        Ncurses();
-        ~Ncurses();
-        int Snake(int ac, char **av);
-        void EndWindows(void);
-        void ClearWindows(void);
+        Snake();
+        ~Snake();
         void RemoveFood(void);
         void Eat(void);
         void MoveSnake(void);
@@ -40,11 +37,10 @@ class Ncurses : public IGameModule {
         bool CanMove(void);
         bool doesittouch(void);
         int SizeMap(void);
-        int GetMove(int _direction);
         void PrintGame(void);
-        void witch_color(std::string str);
         std::vector<std::string> FillMyMap(void);
-
+        void update(const IDisplayModule &lib);
+        void render(IDisplayModule &lib) const;
         enum Keys {
             LEFT,
             RIGHT,
@@ -92,11 +88,6 @@ class Ncurses : public IGameModule {
     // get the 16 best scores
     std::vector<std::tuple<std::string, int>> getLatestScores() const;
 
-    // Handle Game
-    // update game
-    void update();
-    // display stuff using the lib given as an argument.
-    void render(IDisplayModule &lib) const;
     const std::string &getGameName() const;
     protected:
     private:
@@ -106,6 +97,7 @@ class Ncurses : public IGameModule {
         int _direction;
         bool _can_go;
         std::string _name;
+        std::vector<std::string> _MapTmp;
 };
 
-#endif /* !NCURSES_HPP_ */
+#endif /* !Snake_HPP_ */

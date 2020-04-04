@@ -9,9 +9,9 @@ DIR_SRC	=	./src/
 DIR_INC	=	./include
 # DIR_INC	=	./lib/Ncurses/include
 
-NAME	=	lib_arcade_nibbler.so
+NAME	=	lib_arcade_pacman.so
 
-SRC		=   $(DIR_SRC)Snake.cpp \
+SRC		=   $(DIR_SRC)Pacman.cpp \
 
 OBJS	=	$(SRC:.cpp=.o)
 

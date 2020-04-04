@@ -5,30 +5,17 @@
 ## Snake
 ##
 
-DIR_SRC	=	./src/
-DIR_INC	=	./include/
-DIR_INT = 	./lib/SFML/include
-
-NAME	=	lib_arcade_nibbler.so
-NAMES	=	lib_arcade_pacman.so
-
-SRC		=	$(DIR_SRC)Snake.cpp
-OBJS	=	$(SRC:.cpp=.o)
-
-SRCS	=	$(DIR_SRC)Pacman.cpp
-OBJSS	=	$(SRCS:.cpp=.o)
-
-CXXFLAGS	+=	-Wall -Wextra -I$(DIR_INC) -I$(DIR_INT) -g -fPIC
-
-all	:	$(OBJS)
-		gcc -shared -o $(NAME) $(OBJS) -lncurses $(CXXFLAGS)
-		g++ -shared -o $(NAMES) $(DIR_SRC)Pacman.cpp $(CXXFLAGS) -lncurses
+all	:
+		@make -C ./Pacman
+		@make -C ./Snake
 
 clean	:
-		@rm -f $(OBJS)
+		@make clean -C ./Pacman
+		@make clean -C ./Snake
 
 fclean	:	clean
-		@rm -f ../$(NAME)
+		@make fclean -C ./Pacman
+		@make fclean -C ./Snake
 
 re	:	fclean all
 

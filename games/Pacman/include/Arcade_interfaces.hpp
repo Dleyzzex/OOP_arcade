@@ -10,7 +10,6 @@
 
 #include <iostream>
 #include <vector>
-#include <tuple>
 
 #define SAVE_PATH "games/.saves/"
 #define WIDTH 640
@@ -58,21 +57,23 @@ class IDisplayModule {
             W,
             X,
             SPACE,
-            ESCAPE,
             J,
             K,
             U,
             I,
-            M,
-            R,
+            ENTER,
+            BACKSPACE,
             KEYS_END
         };
 
         // For the core
         // Reset the library
         virtual void reset() = 0;
-        // Check if the window is open
+        // Opens / inits the window
         virtual void open() = 0;
+        // Closes / destroys the window
+        virtual void close() = 0;
+        // Check if the window is open
         virtual bool isOpen() const = 0;
 
         // Handle switching libs & games (the names are explicit)
@@ -93,12 +94,12 @@ class IDisplayModule {
         virtual bool isKeyPressedOnce(IDisplayModule::Keys) const = 0;
         // Get the number of frames that passed between two calls to this function
         // The games should not be frame dependant!! That's why this is here.
+        virtual float getDelta() const = 0;
 
         // Handle Loop
         virtual void clear() const = 0;
         virtual void update() = 0;
         virtual void render() const = 0;
-        virtual float getDelta() const = 0;
         // You don't need all three of them, only one should be enough but we added the three of them
         // in case some of you want to seperate each step
         // Your core (or games) should nonetheless call all of these functions in this specific order :
@@ -133,7 +134,6 @@ class IDisplayModule {
         // We chose not to display images because some library can't and it would cause other problems
         // You can still parse a file and display pixel art images by displaying pixels manually if you want.
 
-        // Strictly for debugging purposes, get the library's name (ncurses/sfm/sdl/libcaca etc etc)
         virtual const std::string &getLibName() const = 0;
 };
 
@@ -160,17 +160,17 @@ class IGameModule {
 
         // Set the player's name for the highscore
         virtual void setPlayerName(const std::string &name) = 0;
-        // get the best score
-        virtual std::tuple<std::string, int> getHighscore() const = 0;
+        // get the current score
+        virtual std::pair<std::string, int> getScore() const = 0;
         // get the 16 best scores
-        virtual std::vector<std::tuple<std::string, int>> getLatestScores() const = 0;
+        virtual std::vector<std::pair<std::string, int>> getBestScores() const = 0;
 
         // Handle Game
         // update game
-        virtual void update() = 0;
+        virtual void update(const IDisplayModule &lib) = 0;
         // display stuff using the lib given as an argument.
         virtual void render(IDisplayModule &lib) const = 0;
-        virtual const std::string &getGameName() const = 0;
+        virtual const std::string &getLibName() const = 0;
 };
 
 // Good luck and have fun.

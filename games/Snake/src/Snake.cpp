@@ -1,27 +1,14 @@
 /*
 ** EPITECH PROJECT, 2020
-** Lib Ncurses
+** Lib Snake
 ** File description:
 ** fonctions to make a futur lib
 */
 
-#include "Ncurses.hpp"
+#include "Snake.hpp"
 
-Ncurses::Ncurses()
+Snake::Snake()
 {
-    initscr();
-    if(has_colors() == FALSE)
-    {
-        endwin();
-        printf("Your terminal does not support color\n");
-        exit(1);
-    }
-    start_color();
-    cbreak();
-    noecho();
-    keypad(stdscr, TRUE);
-    curs_set(0);
-    timeout(100);
     this->_name = "Snake";
     this->_Map = FillMyMap();
     this->_direction = 3;
@@ -31,12 +18,10 @@ Ncurses::Ncurses()
     InitFood();
 }
 
-Ncurses::~Ncurses()
-{
-    EndWindows();
-}
+Snake::~Snake()
+{}
 
-std::vector<std::string> Ncurses::FillMyMap(void)
+std::vector<std::string> Snake::FillMyMap(void)
 {
     size_t x_l = 80;
     size_t y_l = 16;
@@ -55,43 +40,14 @@ std::vector<std::string> Ncurses::FillMyMap(void)
     return (_map);
 }
 
-int Ncurses::GetMove(int _direction)
-{
-    int ch = getch();
-    switch (ch) {
-        case KEY_LEFT:
-            if (_direction != 1)
-                return 2;
-            else
-                return (_direction);
-        case KEY_RIGHT:
-            if (_direction != 2)
-                return 1;
-            else
-                return (_direction);
-        case KEY_DOWN:
-            if (_direction != 3)
-                return 4;
-            else
-                return (_direction);
-        case KEY_UP:
-            if (_direction != 4)
-                return 3;
-            else
-                return (_direction);
-        default:
-            return _direction;
-    }
-}
-
-int Ncurses::SizeMap(void)
+int Snake::SizeMap(void)
 {
     int ko = 0;
     for (auto i = this->_Snake.begin(); i != this->_Snake.end(); i++, ko++);
     return (ko);
 }
 
-bool Ncurses::doesittouch(void)
+bool Snake::doesittouch(void)
 {
     if (this->_direction == 1) {
         int ko = 2;
@@ -120,7 +76,7 @@ bool Ncurses::doesittouch(void)
     return (TRUE);
 }
 
-bool Ncurses::CanMove(void)
+bool Snake::CanMove(void)
 {
     if (this->_direction == 1)
         if ((this->_Map[this->_Snake.at(1).first][this->_Snake.at(1).second + 1] != ' ' && this->_Map[this->_Snake.at(1).first][this->_Snake.at(1).second + 1] != 'o') || doesittouch() == FALSE)
@@ -137,14 +93,14 @@ bool Ncurses::CanMove(void)
     return (TRUE);
 }
 
-void Ncurses::InitSnake(void)
+void Snake::InitSnake(void)
 {
     this->_Snake.insert({1, {10, 6}});
     this->_Snake.insert({2, {10, 5}});
     this->_Snake.insert({3, {10, 4}});
 }
 
-bool Ncurses::DontTouchSnake(int nb1, int nb2)
+bool Snake::DontTouchSnake(int nb1, int nb2)
 {
     int ko = 1;
     for (auto i = this->_Snake.begin(); ko < SizeMap(); i++, ko++) {
@@ -154,7 +110,7 @@ bool Ncurses::DontTouchSnake(int nb1, int nb2)
     return (TRUE);
 }
 
-void Ncurses::InitFood(void)
+void Snake::InitFood(void)
 {
     srand(time(NULL));
     int nb1 = 0;
@@ -168,12 +124,12 @@ void Ncurses::InitFood(void)
     this->_Food = {nb1, nb2};
 }
 
-void Ncurses::AddSnake(int size)
+void Snake::AddSnake(int size)
 {
     this->_Snake.insert({size+1, {this->_Snake.at(size).first, this->_Snake.at(size).second}});
 }
 
-void Ncurses::MoveSnake(void)
+void Snake::MoveSnake(void)
 {
     int ko = 1;
     int first = this->_Snake.at(ko).first;
@@ -203,7 +159,7 @@ void Ncurses::MoveSnake(void)
     }
 }
 
-void Ncurses::Eat(void)
+void Snake::Eat(void)
 {
     if (this->_direction == 1)
         if (this->_Snake.at(1).first == this->_Food.first && this->_Snake.at(1).second + 1 == this->_Food.second)
@@ -219,7 +175,7 @@ void Ncurses::Eat(void)
             AddSnake(SizeMap());
 }
 
-void Ncurses::RemoveFood(void)
+void Snake::RemoveFood(void)
 {
     if (this->_direction == 1)
         if (this->_Snake.at(1).first == this->_Food.first && this->_Snake.at(1).second + 1 == this->_Food.second)
@@ -235,107 +191,74 @@ void Ncurses::RemoveFood(void)
             InitFood();
 }
 
-void Ncurses::EndWindows(void)
+void Snake::render(IDisplayModule &lib) const
 {
-    endwin();
-    exit(0);
-}
-
-void Ncurses::ClearWindows(void)
-{
-    refresh();
-    clear();
-}
-
-void Ncurses::witch_color(std::string str)
-{
-    if (str == "#") {
-        init_pair(2, COLOR_WHITE, COLOR_BLACK);
-        attron(COLOR_PAIR(2));
-        printw(str.c_str());
-    }
-    else if (str == "x") {
-        init_pair(3, COLOR_GREEN, COLOR_BLACK);
-        attron(COLOR_PAIR(3));
-        printw(str.c_str());
-    }
-    else if (str == "o") {
-        init_pair(4, COLOR_RED, COLOR_BLACK);
-        attron(COLOR_PAIR(4));
-        printw(str.c_str());
-    }
-    else
-        printw(str.c_str());
-}
-
-void Ncurses::PrintGame(void)
-{
-    std::vector<std::string> _map = FillMyMap();
-    int ko = 1;
-    for (auto i = this->_Snake.begin(); i != this->_Snake.end(); i++, ko++)
-        _map[this->_Snake.at(ko).first][this->_Snake.at(ko).second] = 'x';
-    _map[this->_Food.first][this->_Food.second] = 'o';
-    init_pair(1, COLOR_WHITE, COLOR_BLACK);
-    attron(COLOR_PAIR(1));
-    for (size_t i = 0; i != _map.size(); i++) {
-        for (size_t j = 0; j != _map[i].size(); j++) {
-            std::string str(1, _map[i][j]);
-            witch_color(str);
+    for (float i = 0; i != this->_MapTmp.size(); i++) {
+        for (float j = 0; j != this->_MapTmp[i].size(); j++) {
+            std::string str(1, this->_MapTmp[i][j]);
+            lib.putText(str, 1, j*16, i*8);
         }
     }
 }
 
-void Ncurses::update(void)
+void Snake::update(const IDisplayModule &lib)
 {
-    //Initialisation de l'affichage en NCURSES
-    // while (1) {
-        PrintGame(); //Print Game en NCURSES //FONCTION UPDATE
-        this->_direction = GetMove(this->_direction); //FONCTION MOUVEMENT
-        this->_can_go = CanMove(); //FONCTION UPDATE
-        if (this->_can_go == FALSE)//FONCTION UPDATE
-            EndWindows();//FONCTION UPDATE
-        Eat();//FONCTION UPDATE
-        RemoveFood();//FONCTION UPDATE
-        MoveSnake();//FONCTION UPDATE
-        ClearWindows(); // Refresh + clear en NCURSES // FONCTION CLEAR
-    // }
-    //Fin de Windows en NCURSES
-    // return 0;
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::LEFT)) {
+        if (this->_direction != 1)
+            this->_direction = 2;
+        else
+            this->_direction = 0;
+    }
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::RIGHT)) {
+        if (this->_direction != 1)
+            this->_direction = 2;
+        else
+            this->_direction = 0;
+    }
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::DOWN)) {
+        if (this->_direction != 1)
+            this->_direction = 2;
+        else
+            this->_direction = 0;
+    }
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::UP)) {
+        if (this->_direction != 1)
+            this->_direction = 2;
+        else
+            this->_direction = 0;
+    }
+    this->_can_go = CanMove(); //FONCTION UPDATE
+    if (this->_can_go == FALSE)//FONCTION UPDATE
+        exit(0);//FONCTION UPDATE
+    Eat();//FONCTION UPDATE
+    RemoveFood();//FONCTION UPDATE
+    MoveSnake();//FONCTION UPDATE
+    this->_MapTmp = FillMyMap();
+    int ko = 1;
+    for (auto i = this->_Snake.begin(); i != this->_Snake.end(); i++, ko++)
+         this->_MapTmp[this->_Snake.at(ko).first][this->_Snake.at(ko).second] = 'x';
+     this->_MapTmp [this->_Food.first][this->_Food.second] = 'o';
 }
 
-void Ncurses::render(IDisplayModule &lib) const
-{
-    int key = lib.getKeyCode();
-
-    if (key == lib.LEFT)
-        printf("left");
-}
-
-std::vector<std::tuple<std::string, int>> Ncurses::getLatestScores() const
+std::vector<std::tuple<std::string, int>> Snake::getLatestScores() const
 {
     std::vector<std::tuple<std::string, int>> str;
     return (str);
 }
-std::tuple<std::string, int> Ncurses::getHighscore() const
+std::tuple<std::string, int> Snake::getHighscore() const
 {
     std::tuple<std::string, int> str;
     return str;
 }
-void Ncurses::setPlayerName(const std::string &name){;}
-void Ncurses::reset(){;}
+void Snake::setPlayerName(const std::string &name){;}
+void Snake::reset(){;}
 
-bool Ncurses::loadFromFile(const std::string &filepath){return true;}
-bool Ncurses::loadFromFile(){return true;}
-bool Ncurses::saveToFile(const std::string &filepath) const
+bool Snake::loadFromFile(const std::string &filepath){return true;}
+bool Snake::loadFromFile(){return true;}
+bool Snake::saveToFile(const std::string &filepath) const
 {return true;}
-bool Ncurses::saveToFile() const{return true;}
+bool Snake::saveToFile() const{return true;}
 
-const std::string &Ncurses::getGameName() const{
+const std::string &Snake::getGameName() const{
     return (this->_name);
 }
-// int main(int ac, char **av)
-// {
-//     Ncurses N;
-//     N.Snake(ac, av);
-//     return (0);
-// }
