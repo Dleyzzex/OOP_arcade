@@ -74,6 +74,7 @@ void core::playGame(void)
 {
     game->update(*lib);
     game->render(*lib);
+    lib->render();
 }
 
 void core::updateMenu(void)
@@ -84,6 +85,8 @@ void core::updateMenu(void)
 
 void core::updateLib(void)
 {
+    std::cout << lib->getLibName() << std::endl;
+    lib->clear();
     lib->update();
     // Change Lib
     if (lib->switchToPreviousLib())

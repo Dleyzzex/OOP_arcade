@@ -17,6 +17,8 @@ menu::menu(std::vector<std::string> _libnames, std::vector<std::string> _gamenam
     this->open = true;
     this->libnames = getNames(_libnames);
     this->gamenames = getNames(_gamenames);
+    for (size_t i = 0; i < gamenames.size(); i++)
+        std::cout << gamenames.at(i) << std::endl;
 }
 
 menu::~menu()
@@ -66,5 +68,3 @@ void menu::update(IDisplayModule &lib, IGameModule &game)
 {
     this->gamename = game.getLibName();
 }
-
-// clear -> update -> print
