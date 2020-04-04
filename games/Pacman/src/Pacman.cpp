@@ -7,28 +7,36 @@
 
 #include "Pacman.hpp"
 
-std::vector<std::tuple<std::string, int>> Pacman::getLatestScores() const
+std::vector<std::pair<std::string, int>> Pacman::getBestScores() const
 {
-    std::vector<std::tuple<std::string, int>> str;
+    std::vector<std::pair<std::string, int>> str;
     return (str);
 }
-std::tuple<std::string, int> Pacman::getHighscore() const
+
+std::pair<std::string, int> Pacman::getScore() const
 {
-    std::tuple<std::string, int> str;
+    std::pair<std::string, int> str;
     return str;
 }
+
 void Pacman::setPlayerName(const std::string &name){;}
+
 void Pacman::reset(){;}
 
 bool Pacman::loadFromFile(const std::string &filepath){return true;}
+
 bool Pacman::loadFromFile(){return true;}
+
 bool Pacman::saveToFile(const std::string &filepath) const
 {return true;}
+
 bool Pacman::saveToFile() const{return true;}
 
-const std::string &Pacman::getGameName() const{
+const std::string &Pacman::getLibName() const
+{
     return (this->_name);
 }
+
 void Pacman::InitMap(void)
 {
     this->_Map.push_back("###############\n");
@@ -116,7 +124,6 @@ void Pacman::update(const IDisplayModule &lib)
     this->_Score = std::to_string(jo);
     this->_Score + "\n";
 }
-
 
 void Pacman::render(IDisplayModule &lib) const
 {
@@ -206,7 +213,6 @@ void Pacman::nb_three(int i)
     else if (this->_Ghost.at(i).second + 1 < 15 && this->_Map[this->_Ghost.at(i).first][this->_Ghost.at(i).second + 1] != '#')
         this->_Ghost.at(i).second += 1;
 }
-
 
 bool Pacman::doesittouch(void)
 {
@@ -303,4 +309,9 @@ Pacman::Pacman()
 
 Pacman::~Pacman()
 {
+}
+
+extern "C" std::unique_ptr<IGameModule> createLib(void)
+{
+    return std::make_unique<Pacman>();
 }

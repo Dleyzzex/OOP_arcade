@@ -240,25 +240,36 @@ void Snake::update(const IDisplayModule &lib)
      this->_MapTmp [this->_Food.first][this->_Food.second] = 'o';
 }
 
-std::vector<std::tuple<std::string, int>> Snake::getLatestScores() const
+std::vector<std::pair<std::string, int>> Snake::getBestScores() const
 {
-    std::vector<std::tuple<std::string, int>> str;
+    std::vector<std::pair<std::string, int>> str;
     return (str);
 }
-std::tuple<std::string, int> Snake::getHighscore() const
+
+std::pair<std::string, int> Snake::getScore() const
 {
-    std::tuple<std::string, int> str;
+    std::pair<std::string, int> str;
     return str;
 }
 void Snake::setPlayerName(const std::string &name){;}
+
 void Snake::reset(){;}
 
 bool Snake::loadFromFile(const std::string &filepath){return true;}
+
 bool Snake::loadFromFile(){return true;}
+
 bool Snake::saveToFile(const std::string &filepath) const
 {return true;}
+
 bool Snake::saveToFile() const{return true;}
 
-const std::string &Snake::getGameName() const{
+const std::string &Snake::getLibName() const
+{
     return (this->_name);
+}
+
+extern "C" std::unique_ptr<IGameModule> createLib(void)
+{
+    return std::make_unique<Snake>();
 }

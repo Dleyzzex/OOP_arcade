@@ -6,8 +6,8 @@
 ##
 
 DIR_SRC	=	./src/
+DIR_INT	=	../../include/interface/
 DIR_INC	=	./include
-# DIR_INC	=	./lib/Ncurses/include
 
 NAME	=	lib_arcade_pacman.so
 
@@ -15,7 +15,7 @@ SRC		=   $(DIR_SRC)Pacman.cpp \
 
 OBJS	=	$(SRC:.cpp=.o)
 
-CXXFLAGS	+=	-Wall -Wextra -I$(DIR_INC) -g -fPIC
+CXXFLAGS	+=	-Wall -Wextra -I$(DIR_INC) -I$(DIR_INT) -g -fPIC
 
 all	:	$(OBJS)
 		g++ -shared -o $(NAME) $(OBJS) -lncurses

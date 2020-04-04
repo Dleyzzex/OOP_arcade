@@ -21,7 +21,7 @@
 #include <iterator>
 #include <unistd.h>
 #include <bits/stdc++.h>
-#include <Arcade_interfaces.hpp>
+#include "Arcade_interfaces.hpp"
 
 class Snake : public IGameModule {
     public:
@@ -67,6 +67,7 @@ class Snake : public IGameModule {
             KEYS_END
         };
 
+    // Reset game at any moment
     void reset();
 
     // Load highscores from file and return wether it worked or not
@@ -80,16 +81,16 @@ class Snake : public IGameModule {
     // Highscores are stored as such :
     // "name:value\n
     // name2:value2\nEOF"
-
     // Set the player's name for the highscore
     void setPlayerName(const std::string &name);
-    // get the best score
-    std::tuple<std::string, int> getHighscore() const;
-    // get the 16 best scores
-    std::vector<std::tuple<std::string, int>> getLatestScores() const;
+    // get the current score
+    std::pair<std::string, int> getScore() const;
 
-    const std::string &getGameName() const;
-    protected:
+    // get the 16 best scores
+    std::vector<std::pair<std::string, int>> getBestScores() const;
+
+    const std::string &getLibName() const;
+
     private:
         std::vector<std::string> _Map;
         std::map<int, std::pair<int, int>> _Snake;

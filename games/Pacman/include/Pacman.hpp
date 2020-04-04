@@ -8,7 +8,6 @@
 #ifndef PACMAN_HPP_
 #define PACMAN_HPP_
 
-
 #include <ncurses.h>
 #include <cstdlib>
 #include <stdio.h>
@@ -21,12 +20,11 @@
 #include <algorithm>
 #include <sstream>
 #include <iterator>
-#include <iterator>
 #include <unistd.h>
 #include <bits/stdc++.h>
-#include <Arcade_interfaces.hpp>
+#include "Arcade_interfaces.hpp"
 
-class Pacman : public IGameModule{
+class Pacman : public IGameModule {
     public:
         Pacman();
         ~Pacman();
@@ -44,6 +42,8 @@ class Pacman : public IGameModule{
         bool doesittouch();
         void MovePacman(void);
         void gain_coin(void);
+
+        // Reset game at any moment
         void reset();
 
         // Load highscores from file and return wether it worked or not
@@ -57,21 +57,22 @@ class Pacman : public IGameModule{
         // Highscores are stored as such :
         // "name:value\n
         // name2:value2\nEOF"
-
         // Set the player's name for the highscore
         void setPlayerName(const std::string &name);
-        // get the best score
-        std::tuple<std::string, int> getHighscore() const;
+        // get the current score
+        std::pair<std::string, int> getScore() const;
+
         // get the 16 best scores
-        std::vector<std::tuple<std::string, int>> getLatestScores() const;
+        std::vector<std::pair<std::string, int>> getBestScores() const;
 
         // Handle Game
         // update game
         void update(const IDisplayModule &lib);
+
         // display stuff using the lib given as an argument.
         void render(IDisplayModule &lib) const;
-        const std::string &getGameName() const;
-    protected:
+        const std::string &getLibName() const;
+
     private:
         std::vector<std::string> _MapTmp;
         int _FoodRemaining;
