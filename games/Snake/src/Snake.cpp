@@ -203,29 +203,21 @@ void Snake::render(IDisplayModule &lib) const
 
 void Snake::update(const IDisplayModule &lib)
 {
-    if (lib.isKeyPressedOnce(IDisplayModule::Keys::LEFT)) {
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::Q)) {
         if (this->_direction != 1)
             this->_direction = 2;
-        else
-            this->_direction = 0;
     }
-    if (lib.isKeyPressedOnce(IDisplayModule::Keys::RIGHT)) {
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::D)) {
         if (this->_direction != 1)
             this->_direction = 2;
-        else
-            this->_direction = 0;
     }
-    if (lib.isKeyPressedOnce(IDisplayModule::Keys::DOWN)) {
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::S)) {
         if (this->_direction != 1)
             this->_direction = 2;
-        else
-            this->_direction = 0;
     }
-    if (lib.isKeyPressedOnce(IDisplayModule::Keys::UP)) {
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::Z)) {
         if (this->_direction != 1)
             this->_direction = 2;
-        else
-            this->_direction = 0;
     }
     this->_can_go = CanMove(); //FONCTION UPDATE
     if (this->_can_go == FALSE)//FONCTION UPDATE

@@ -95,8 +95,8 @@ bool Ncurses::shouldGoToMenu() const
 
 bool Ncurses::shouldExit() const
 {
-    // if (this->isKeyPressed(IDisplayModule::BACKSPACE))
-    //     return true;
+    if (this->isKeyPressed(IDisplayModule::BACKSPACE))
+        return true;
     return false;
 }
 
@@ -110,22 +110,22 @@ bool Ncurses::KeySet(IDisplayModule::Keys key) const
         case RIGHT: if (ch == KEY_RIGHT) { return true; }           break;
         case UP: if (ch == KEY_UP) { return true; }                 break;
         case DOWN: if (ch == KEY_DOWN) { return true; }             break;
-        // case Z: if (ch == KEY_Z) { return true; }                   break;
-        // case Q: if (ch == KEY_Q) { return true; }                   break;
-        // case S: if (ch == KEY_S) { return true; }                   break;
-        // case D: if (ch == KEY_D) { return true; }                   break;
-        // case A: if (ch == KEY_A) { return true; }                   break;
-        // case E: if (ch == KEY_E) { return true; }                   break;
-        // case W: if (ch == KEY_W) { return true; }                   break;
-        // case X: if (ch == KEY_X) { return true; }                   break;
-        // case SPACE: if (ch == KEY_Space) { return true; }           break;
-        // case J: if (ch == KEY_J) { return true; }                   break;
-        // case K: if (ch == KEY_K) { return true; }                   break;
-        // case U: if (ch == KEY_U) { return true; }                   break;
-        // case I: if (ch == KEY_I) { return true; }                   break;
-        //?? case ENTER: if (ch == KEY_ENTER) { return true; }          break;
-        //?? case BACKSPACE: if (ch == KEY_BACKSPACE) { return true; }   break;
-        //?? case KEYS_END: return false;
+        case Z: if (ch == 122) { return true; }                   break;
+        case Q: if (ch == 113) { return true; }                   break;
+        case S: if (ch == 115) { return true; }                   break;
+        case D: if (ch == 100) { return true; }                   break;
+        case A: if (ch == 97) { return true; }                   break;
+        case E: if (ch == 101) { return true; }                   break;
+        case W: if (ch == 119) { return true; }                   break;
+        case X: if (ch == 120) { return true; }                   break;
+        case SPACE: if (ch == 32) { return true; }           break;
+        case J: if (ch == 109) { return true; }                   break;
+        case K: if (ch == 108) { return true; }                   break;
+        case U: if (ch == 117) { return true; }                   break;
+        case I: if (ch == 105) { return true; }                   break;
+        case ENTER: if (ch == 10) { return true; }          break;
+        case BACKSPACE: if (ch == 263) { return true; }   break;
+        case KEYS_END: return false;
         default: return false;
     }
     return false;
