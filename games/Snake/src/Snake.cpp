@@ -210,11 +210,19 @@ void Snake::render(IDisplayModule &lib) const
             }
         }
     }
-    auto result = this->_name + " : " + std::to_string(this->_score);
-    lib.putText("result", 100, 0, 0);
+    if (this->_best_score_aff > this->_score)
+        lib.setColor(IDisplayModule::Colors::RED);
+    else
+        lib.setColor(IDisplayModule::Colors::GREEN);
+    auto result = "Your score is -> " + this->_name + " : " + std::to_string(this->_score);
+    lib.putText(result, 10, 50, YORD * 85);
 
-    auto best_result = this->_best_gamer_aff + " : " + std::to_string(this->_best_score_aff );
-    lib.putText("result", 100, 0, 0);
+    if (this->_best_score_aff < this->_score)
+        lib.setColor(IDisplayModule::Colors::RED);
+    else
+        lib.setColor(IDisplayModule::Colors::GREEN);
+    auto best_result = "The best score is -> " + this->_best_gamer_aff + " : " + std::to_string(this->_best_score_aff);
+    lib.putText(best_result, 10, 50, YORD * 90);
 }
 
 void Snake::Bestscore()
@@ -240,9 +248,9 @@ void Snake::Bestscore()
             best_score_tmp = std::stoi(line, &sz);
             if (best_score_tmp > best_score) {
                 best_score = best_score_tmp;
-                this->_best_score = {{line, best_score}};
+                this->_best_score = {{_name_tmp, best_score}};
                 this->_best_score_aff = best_score;
-                this->_best_gamer_aff = line;
+                this->_best_gamer_aff = _name_tmp;
             }
         }
         ++count;
