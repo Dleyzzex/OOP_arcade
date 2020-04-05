@@ -85,6 +85,7 @@ const std::string &Pacman::getLibName() const
 void Pacman::update(const IDisplayModule &lib)
 {
     int old = this->pacman->getDirection();
+    std::pair<int, int> pacmanPosition = this->pacman->getPosition();
 
     if (lib.isKeyPressedOnce(IDisplayModule::Keys::Z))
         this->pacman->setDirection(1);
@@ -95,13 +96,50 @@ void Pacman::update(const IDisplayModule &lib)
     if (lib.isKeyPressedOnce(IDisplayModule::Keys::D))
         this->pacman->setDirection(4);
     direction = this->pacman->getDirection();
-    // direct = this->ghost->getDirection();
     if (speed == SPEED) {
         movePacman(old);
         moveGhost(old);
+        checkCollisions();
         speed = 0;
+        for (size_t i = 0; i < food.size(); i++) {
+            if (food.at(i).first == true && pacmanPosition.first == food.at(i).second.second && pacmanPosition.second == food.at(i).second.first)
+                food.at(i).first = false;
+        }
+        if (pacman->getLives() <= 0) {
+            reset();
+            lost = true;
+        }
+        if (asWon() == true) {
+            won = true;
+            reset();
+        }
+    }
+    if ((lost == true || won == true) && lib.isKeyPressedOnce(IDisplayModule::Keys::ENTER)) {
+        won = false;
+        lost = false;
     }
     speed++;
+}
+
+void Pacman::checkCollisions(void)
+{
+    std::pair<int, int> pacmanPosition = pacman->getPosition();
+    std::pair<int, int> ghostPosition;
+
+    for (size_t i = 0; i < ghost.size(); i++) {
+        ghostPosition =  ghost.at(i)->getPosition();
+        if (ghostPosition.first == pacmanPosition.first && ghostPosition.second == pacmanPosition.second)
+            pacman->setLives(pacman->getLives() - 1);
+    }
+}
+
+bool Pacman::asWon(void)
+{
+    for (size_t i = 0; i < food.size(); i++) {
+        if (food.at(i).first == true)
+            return (false);
+    }
+    return (true);
 }
 
 int get(int old)
@@ -205,25 +243,30 @@ void Pacman::render(IDisplayModule &lib) const
         for (size_t j = 0; j < this->map.at(i).size(); j++) {
             if (this->map.at(i).at(j) == '#') {
                 lib.setColor(IDisplayModule::Colors::BLUE);
-                lib.putFillRect((20 * j) + XORD, (20 * i) + YORD, 10, 10);
-            }
-            if (this->map.at(i).at(j) != '#') {
-                lib.setColor(IDisplayModule::Colors::BLACK);
-                lib.putFillRect((20 * j) + XORD, (20 * i) + YORD, 10, 10);
-            }
-            if (this->map.at(i).at(j) == '.') {
-                lib.setColor(IDisplayModule::Colors::YELLOW);
-                lib.putFillRect((20 * j) + XORD + 5, (20 * i) + YORD + 5, 2, 2);
+                lib.putFillRect((20 * j) + XORD, (20 * i) + YORD, 17, 17);
             }
         }
     }
     lib.setColor(this->pacman->getColor());
-    lib.putFillCircle((20 * pacmanPosition.first) + 25, (20 * pacmanPosition.second), MANSIZE);
+    lib.putFillCircle((20 * pacmanPosition.first) + 30, (20 * pacmanPosition.second) + 5, MANSIZE);
     for (size_t i = 0; i < this->ghost.size(); i++) {
         ghostPosition = this->ghost.at(i)->getPosition();
         lib.setColor(this->ghost.at(i)->getColor());
         lib.putFillCircle((20 * ghostPosition.first) + XORD, (20 * ghostPosition.second) + YORD, GHOSTSIZE);
     }
+    for (size_t i = 0; i < food.size(); i++) {
+        if (food.at(i).first == true) {
+            lib.setColor(IDisplayModule::Colors::YELLOW);
+            lib.putPixel((20 * food.at(i).second.second) + XORD + 7, (20 * food.at(i).second.first) + YORD + 7);
+            // lib.putFillRect((20 * food.at(i).second.second) + XORD + 5, (20 * food.at(i).second.first) + YORD + 5, 2, 2);
+        }
+    }
+    if (won == true)
+        lib.putText("Well done ! You won !", 20, 250, 200);
+    if (lost == true)
+        lib.putText("gAmE OvEr", 20, 250, 200);
+    lib.putText("Lives : ", 12, 35, 170);
+    lib.putText(std::to_string(pacman->getLives()), 12, 100, 170);
 }
 
 void Pacman::InitMap(void)
@@ -252,6 +295,12 @@ void Pacman::InitMap(void)
     this->map.push_back("#.##########.###.##########.#\n");
     this->map.push_back("#...........................#\n");
     this->map.push_back("#############################\n");
+    for (size_t i = 0; i < this->map.size(); i++) {
+        for (size_t j = 0; j < this->map.at(i).size(); j++) {
+            if (map[i][j] == '.')
+                this->food.push_back((std::pair<bool, std::pair<int, int>>){true, (std::pair<int, int>(i, j))});
+        }
+    }
 }
 
 Pacman::Man::Man()

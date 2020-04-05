@@ -25,7 +25,7 @@ void Ncurses::open()
     initscr();
     wresize(stdscr, HEIGHT, WIDTH);
     cbreak();
-        timeout(0);
+    timeout(0);
     nodelay(stdscr, TRUE);
     curs_set(0);
     keypad(stdscr, TRUE);
@@ -51,28 +51,28 @@ bool Ncurses::isOpen() const
 // The keys enum only lists keys used by games, not special keys to switch libraries.
 bool Ncurses::switchToNextLib() const
 {
-    if (this->isKeyPressed(IDisplayModule::UP))
+    if (this->isKeyPressedOnce(IDisplayModule::UP))
         return true;
     return false;
 }
 
 bool Ncurses::switchToPreviousLib() const
 {
-    if (this->isKeyPressed(IDisplayModule::DOWN))
+    if (this->isKeyPressedOnce(IDisplayModule::DOWN))
         return true;
     return false;
 }
 
 bool Ncurses::switchToNextGame() const
 {
-    if (this->isKeyPressed(IDisplayModule::RIGHT))
+    if (this->isKeyPressedOnce(IDisplayModule::RIGHT))
         return true;
     return false;
 }
 
 bool Ncurses::switchToPreviousGame() const
 {
-    if (this->isKeyPressed(IDisplayModule::LEFT))
+    if (this->isKeyPressedOnce(IDisplayModule::LEFT))
         return true;
     return false;
 }
@@ -80,21 +80,21 @@ bool Ncurses::switchToPreviousGame() const
 // From the pdf
 bool Ncurses::shouldBeRestarted() const
 {
-    if (this->isKeyPressed(IDisplayModule::X))
+    if (this->isKeyPressedOnce(IDisplayModule::X))
         return true;
     return false;
 }
 
 bool Ncurses::shouldGoToMenu() const
 {
-    if (this->isKeyPressed(IDisplayModule::W))
+    if (this->isKeyPressedOnce(IDisplayModule::W))
         return true;
     return false;
 }
 
 bool Ncurses::shouldExit() const
 {
-    if (this->isKeyPressed(IDisplayModule::BACKSPACE))
+    if (this->isKeyPressedOnce(IDisplayModule::BACKSPACE))
         return true;
     return false;
 }
@@ -220,7 +220,7 @@ void Ncurses::setColor(IDisplayModule::Colors col)
 // Display a pixel
 void Ncurses::putPixel(float x, float y) const
 {
-    mvprintw(y / 16, x / 8, "X");
+    mvprintw(y / 16, x / 8, ".");
 }
 
 // Display a line
@@ -232,19 +232,19 @@ void Ncurses::putLine(float x1, float y1, float x2, float y2) const
     y2 /= 16;
 
     if (x1 < x2 && y1 == y2) {
-        mvhline(y1, x1, 'X', x2 - x1);
+        mvhline(y1, x1, '-', x2 - x1);
         return;
     }
     if (x1 > x2 && y1 == y2) {
-        mvhline(y1, x2, 'X', x1 - x2);
+        mvhline(y1, x2, '-', x1 - x2);
         return;
     }
     if (y1 < y2 && x1 == x2) {
-        mvhline(y1, x1, 'X', y2 - y1);
+        mvhline(y1, x1, '-', y2 - y1);
         return;
     }
     if (y1 > y2 && x1 == x2) {
-        mvhline(y2, x1, 'X', y1 - y2);
+        mvhline(y2, x1, '-', y1 - y2);
         return;
     }
 
@@ -284,7 +284,7 @@ void Ncurses::putCircle(float x, float y, float rad) const
     for(double i = 0; i < 360; i += 0.1) {
         x1 = rad * cos(i * PI / 180);
         y1 = rad * sin(i * PI / 180);
-        putPixel(x + x1, y + y1);
+        mvprintw((y + y1) / 16, (x + x1) / 8, "o");
     }
 }
 // Display a full circle
@@ -296,7 +296,7 @@ void Ncurses::putFillCircle(float x, float y, float rad) const
     for (int x1 = -rad; x1 < rad ; x1++) {
         h = (int)sqrt(rad * rad - pow(x1, 2));
         for (int y1 = -h; y1 < h; y1++)
-            putPixel(x + x1, y + y1);
+             mvprintw((y + y1) / 16, (x + x1) / 8, "o");
     }
 }
 // Display some text

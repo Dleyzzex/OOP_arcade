@@ -17,8 +17,6 @@ menu::menu(std::vector<std::string> _libnames, std::vector<std::string> _gamenam
     this->open = true;
     this->libnames = getNames(_libnames);
     this->gamenames = getNames(_gamenames);
-    for (size_t i = 0; i < gamenames.size(); i++)
-        std::cout << gamenames.at(i) << std::endl;
 }
 
 menu::~menu()
@@ -57,11 +55,8 @@ std::vector<std::string> menu::getNames(std::vector<std::string> src)
 
 void menu::render(IDisplayModule &lib)
 {
-    lib.update();
-    lib.clear();
     lib.setColor(IDisplayModule::Colors::WHITE);
     lib.putFillRect(20,20,20,20);
-    lib.render();
 }
 
 void menu::update(IDisplayModule &lib, IGameModule &game)

@@ -22,6 +22,7 @@ class core
 {
 public:
     core(std::vector<std::string>, std::vector<std::string>);
+    core(std::vector<std::string>, std::vector<std::string>, int _lIndex);
     ~core();
 private:
     // Hold the name and the ptr to a DLLoader

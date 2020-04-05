@@ -19,6 +19,19 @@ core::core(std::vector<std::string> _libnames, std::vector<std::string> _gamenam
     launch();
 }
 
+core::core(std::vector<std::string> _libnames, std::vector<std::string> _gamenames, int _lIndex)
+{
+    this->libnames = _libnames;
+    this->gamenames = _gamenames;
+    this->lIndex = 0;
+    this->gIndex = 0;
+    this->isMenu = true;
+    this->lIndex = _lIndex;
+    loadLib();
+    loadGame();
+    launch();
+}
+
 core::~core()
 {
 }
@@ -67,6 +80,7 @@ void core::launch(void)
         } else {
             playGame();
         }
+        lib->render();
     }
 }
 
@@ -74,7 +88,6 @@ void core::playGame(void)
 {
     game->update(*lib);
     game->render(*lib);
-    lib->render();
 }
 
 void core::updateMenu(void)
@@ -122,7 +135,6 @@ void core::changeLib(int direction)
     this->lib->close();
     this->lib = getLib(libnames.at(lIndex));
     this->lib->open();
-    updateLib();
 }
 
 void core::changeGame(int direction)
@@ -135,5 +147,4 @@ void core::changeGame(int direction)
         index = 0;
     this->gIndex = index;
     this->game = getGame(gamenames.at(gIndex));
-    playGame();
 }

@@ -25,7 +25,7 @@ void Sfml::open()
     setColor(DEFAULT);
     this->name = "Sfml";
     this->window->setFramerateLimit(60);
-    this->font.loadFromFile("../../assets/arial.ttf");
+    this->font.loadFromFile("./assets/arial.ttf");
 }
 // Check if the window is open
 
@@ -152,7 +152,6 @@ void Sfml::clear() const
 
 void Sfml::update()
 {
-    printf("sfml\n");
     if (this->window->pollEvent(this->event)) {
         if (this->event.type == sf::Event::Closed)
             this->window->close();

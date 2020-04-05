@@ -10,7 +10,7 @@
 
 #define XORD 30
 #define YORD 5
-#define MANSIZE 10
+#define MANSIZE 9
 #define GHOSTSIZE 8
 #define MANSPEED 1
 #define SPEED 10
@@ -21,6 +21,7 @@
 #include <iterator>
 #include <memory>
 #include <map>
+#include <ostream>
 #include "Arcade_interfaces.hpp"
 
 class Pacman : public IGameModule {
@@ -88,7 +89,6 @@ class Pacman : public IGameModule {
         std::pair<int, int> _Pacman;
         std::vector<std::string> _MapTmp;
         std::map<int, std::pair<int, int>> _Ghost;
-        std::map<int, std::pair<int, int>> _Food;
         std::map<int, std::pair<int, int>> _SuperFood;
         */
         class Man
@@ -121,6 +121,11 @@ class Pacman : public IGameModule {
         std::vector<std::unique_ptr<Man>> ghost;
         std::vector<std::string> map;
         std::vector<std::unique_ptr<Man>> getGhosts(void);
+        std::vector<std::pair<bool, std::pair<int, int>>> food;
+        void checkCollisions(void);
+        bool asWon(void);
+        bool won;
+        bool lost;
         int speed;
         int direction;
         int direct;
