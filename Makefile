@@ -11,8 +11,7 @@ all		:
 		make -C ./lib/SFML
 		make -C ./lib/SDL
 		# Games
-		make -C ./games/AZE
-		make -C ./games/Snake
+		#make -C ./games/Snake
 		make -C ./games/Pacman
 		# Core
 		make -C ./core
@@ -21,7 +20,7 @@ core	:
 		make -C ./core
 
 games	:
-		make -C ./games/Snake
+#		make -C ./games/Snake
 		make -C ./games/Pacman
 
 graphicals	:
@@ -35,8 +34,7 @@ fclean	:
 		make fclean -C ./lib/SFML
 		make fclean -C ./lib/SDL
 		# Games
-		make fclean -C ./games/AZE
-		make fclean -C ./games/Snake
+		#make fclean -C ./games/Snake
 		make fclean -C ./games/Pacman
 		# Core
 		make fclean -C ./core/

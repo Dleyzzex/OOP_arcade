@@ -85,7 +85,6 @@ void core::updateMenu(void)
 
 void core::updateLib(void)
 {
-    std::cout << lib->getLibName() << std::endl;
     lib->clear();
     lib->update();
     // Change Lib

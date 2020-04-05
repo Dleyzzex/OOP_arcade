@@ -7,6 +7,31 @@
 
 #include "Pacman.hpp"
 
+Pacman::Pacman()
+{
+    this->gameName = "Pacman";
+    this->speed = 0;
+    this->pacman = std::make_unique<Man>();
+    this->ghost = getGhosts();
+    InitMap();
+    srand(time(0));
+}
+
+Pacman::~Pacman()
+{
+}
+
+std::vector<std::unique_ptr<Pacman::Man>> Pacman::getGhosts(void)
+{
+    std::vector<std::unique_ptr<Pacman::Man>> ret;
+
+    ret.push_back(std::make_unique<Man>(1, (std::pair<int, int>){14, 10}, IDisplayModule::Colors::LIGHT_YELLOW));
+    ret.push_back(std::make_unique<Man>(1, (std::pair<int, int>){14, 12}, IDisplayModule::Colors::LIGHT_BLUE));
+    ret.push_back(std::make_unique<Man>(1, (std::pair<int, int>){12, 10}, IDisplayModule::Colors::LIGHT_RED));
+    ret.push_back(std::make_unique<Man>(1, (std::pair<int, int>){12, 12}, IDisplayModule::Colors::LIGHT_MAGENTA));
+    return ret;
+}
+
 std::vector<std::pair<std::string, int>> Pacman::getBestScores() const
 {
     std::vector<std::pair<std::string, int>> str;
@@ -19,296 +44,273 @@ std::pair<std::string, int> Pacman::getScore() const
     return str;
 }
 
-void Pacman::setPlayerName(const std::string &name){;}
+void Pacman::setPlayerName(const std::string &name)
+{
+    (void) name;
+}
 
-void Pacman::reset(){;}
+void Pacman::reset()
+{
+    this->pacman->~Man();
+    this->speed = 0;
+    this->pacman = std::make_unique<Man>();
+    InitMap();
+}
 
-bool Pacman::loadFromFile(const std::string &filepath){return true;}
+bool Pacman::loadFromFile(const std::string &filepath)
+{
+    return true;
+}
 
-bool Pacman::loadFromFile(){return true;}
+bool Pacman::loadFromFile()
+{
+    return true;
+}
 
 bool Pacman::saveToFile(const std::string &filepath) const
-{return true;}
+{
+    return true;
+}
 
-bool Pacman::saveToFile() const{return true;}
+bool Pacman::saveToFile() const
+{
+    return true;
+}
 
 const std::string &Pacman::getLibName() const
 {
-    return (this->_name);
-}
-
-void Pacman::InitMap(void)
-{
-    this->_Map.push_back("###############\n");
-    this->_Map.push_back("#      #      #\n");
-    this->_Map.push_back("# # ## # ## # #\n");
-    this->_Map.push_back("#             #\n");
-    this->_Map.push_back("# ## #  # # # #\n");
-    this->_Map.push_back("#    ## ### ###\n");
-    this->_Map.push_back("#### #  # # # #\n");
-    this->_Map.push_back("#             #\n");
-    this->_Map.push_back("# ## ###   ## #\n");
-    this->_Map.push_back("#  #   ##  #  #\n");
-    this->_Map.push_back("# ## # ## ## ##\n");
-    this->_Map.push_back("#             #\n");
-    this->_Map.push_back("###############\n");
-}
-
-void Pacman::InitSuperFood(void)
-{
-    this->_SuperFood.insert({1, {1, 1}});
-    this->_SuperFood.insert({2, {1, 13}});
-    this->_SuperFood.insert({3, {11, 1}});
-    this->_SuperFood.insert({4, {11, 13}});
-}
-
-void Pacman::InitGhost(void)
-{
-    this->_Ghost.insert({1, {3, 1}});
-    this->_Ghost.insert({2, {9, 1}});
-    this->_Ghost.insert({3, {7, 6}});
-    this->_Ghost.insert({4, {4, 13}});
+    return (this->gameName);
 }
 
 void Pacman::update(const IDisplayModule &lib)
 {
-    Moving();
-    if (lib.isKeyPressedOnce(IDisplayModule::Keys::LEFT)) {
-        if (this->_direction != 1)
-            this->_direction = 2;
-        else
-            this->_direction = 0;
+    int old = this->pacman->getDirection();
+
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::Z))
+        this->pacman->setDirection(1);
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::S))
+        this->pacman->setDirection(2);
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::Q))
+        this->pacman->setDirection(3);
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::D))
+        this->pacman->setDirection(4);
+    direction = this->pacman->getDirection();
+    // direct = this->ghost->getDirection();
+    if (speed == SPEED) {
+        movePacman(old);
+        moveGhost(old);
+        speed = 0;
     }
-    if (lib.isKeyPressedOnce(IDisplayModule::Keys::RIGHT)) {
-        if (this->_direction != 1)
-            this->_direction = 2;
-        else
-            this->_direction = 0;
+    speed++;
+}
+
+int get(int old)
+{
+    int tmp = rand() % 4;
+
+    if (tmp == old)
+        return (-1);
+    return (tmp);
+}
+
+void Pacman::moveGhost(int old)
+{
+    std::pair<int, int> ghostPosition;
+
+    for (size_t i = 0; i < this->ghost.size(); i++) {
+        int direct = this->ghost.at(i)->getDirection();
+        ghostPosition = this->ghost.at(i)->getPosition();
+        if (checkDirection(i) == true)
+            if ((direct = get(direct)) == -1)
+                direct = this->pacman->getDirection();
+        if (direct == 0) {
+            if (this->map[ghostPosition.second - MANSPEED][ghostPosition.first] != '#') // Avance
+                this->ghost.at(i)->setPosition((std::pair<int, int>){ghostPosition.first, ghostPosition.second - MANSPEED});
+        }
+        if (direct == 1) {
+            if (this->map[ghostPosition.second + MANSPEED][ghostPosition.first] != '#') // Recule
+               this->ghost.at(i)->setPosition((std::pair<int, int>){ghostPosition.first, ghostPosition.second + MANSPEED});
+        }
+        if (direct == 2) {
+            if (this->map[ghostPosition.second][ghostPosition.first - MANSPEED] != '#') // Gauche
+                this->ghost.at(i)->setPosition((std::pair<int, int>){ghostPosition.first - MANSPEED, ghostPosition.second});
+        }
+        if (direct == 3) {
+            if (this->map[ghostPosition.second][ghostPosition.first + MANSPEED] != '#') // Droite
+                this->ghost.at(i)->setPosition((std::pair<int, int>){ghostPosition.first + MANSPEED, ghostPosition.second});
+        }
+        if (ghostPosition.first == -1 && ghostPosition.second == 11)
+            this->ghost.at(i)->setPosition((std::pair<int, int>){27, 11});
+        if (ghostPosition.first == 28 && ghostPosition.second == 11)
+            this->ghost.at(i)->setPosition((std::pair<int, int>){0, 11});
     }
-    if (lib.isKeyPressedOnce(IDisplayModule::Keys::DOWN)) {
-        if (this->_direction != 1)
-            this->_direction = 2;
-        else
-            this->_direction = 0;
+}
+
+bool Pacman::checkDirection(size_t i)
+{
+    std::pair<int, int> ghostPosition = this->ghost.at(i)->getPosition();
+    int direct = this->ghost.at(i)->getDirection();
+
+    if (direct == 0) {
+        if (this->map[ghostPosition.second - MANSPEED][ghostPosition.first] == '#') // Avance
+            return (true);
     }
-    if (lib.isKeyPressedOnce(IDisplayModule::Keys::UP)) {
-        if (this->_direction != 1)
-            this->_direction = 2;
-        else
-            this->_direction = 0;
+    if (direct == 1) {
+        if (this->map[ghostPosition.second + MANSPEED][ghostPosition.first] == '#') // Recule
+            return (true);
     }
-    this->_can_go = doesittouch(); //FONCTION UPDATE
-    if (this->_can_go == FALSE)//FONCTION UPDATE
-        exit(0);
-    this->_can_move = CanMove();
-    if (this->_can_move == TRUE)
-        MovePacman();
-    gain_coin();
-    if (this->_powerup == 0)
-        _MapTmp[this->_Pacman.first][this->_Pacman.second] = 'c';
-    else {
-        _MapTmp[this->_Pacman.first][this->_Pacman.second] = 'C';
-        this->_powerup--;
+    if (direct == 2) {
+        if (this->map[ghostPosition.second][ghostPosition.first - MANSPEED] == '#') // Gauche
+            return (true);
     }
-    this->_MapTmp = this->_Map;
-    for (long unsigned int i = 1; i != this->_Food.size(); i++)
-        if (this->_Food.at(i).first > 0)
-           this->_MapTmp[this->_Food.at(i).first][this->_Food.at(i).second] = '.';
-    for (long unsigned int i = 1; i < this->_SuperFood.size() + 1; i++)
-        if (this->_SuperFood.at(i).first > 0)
-           this->_MapTmp[this->_SuperFood.at(i).first][this->_SuperFood.at(i).second] = '*';
-    for (long unsigned int i = 1; i != this->_Ghost.size() + 1; i++)
-        if (this->_Ghost.at(i).first > 0)
-           this->_MapTmp[this->_Ghost.at(i).first][this->_Ghost.at(i).second] = 'W';
-    int jo = 95 - _FoodRemaining;
-    this->_Score = std::to_string(jo);
-    this->_Score + "\n";
+    if (direct == 3) {
+        if (this->map[ghostPosition.second][ghostPosition.first + MANSPEED] == '#') // Droite
+            return (true);
+    }
+    return (false);
+}
+
+void Pacman::movePacman(int old)
+{
+    std::pair<int, int> pacmanPosition = this->pacman->getPosition();
+
+    if (direction == 1) {
+        if (this->map[pacmanPosition.second - MANSPEED][pacmanPosition.first] != '#') // Avance
+            this->pacman->setPosition((std::pair<int, int>){pacmanPosition.first, pacmanPosition.second - MANSPEED});
+    }
+    if (direction == 2) {
+        if (this->map[pacmanPosition.second + MANSPEED][pacmanPosition.first] != '#') // Recule
+           this->pacman->setPosition((std::pair<int, int>){pacmanPosition.first, pacmanPosition.second + MANSPEED});
+    }
+    if (direction == 3) {
+        if (this->map[pacmanPosition.second][pacmanPosition.first - MANSPEED] != '#') // Gauche
+            this->pacman->setPosition((std::pair<int, int>){pacmanPosition.first - MANSPEED, pacmanPosition.second});
+    }
+    if (direction == 4) {
+        if (this->map[pacmanPosition.second][pacmanPosition.first + MANSPEED] != '#') // Droite
+            this->pacman->setPosition((std::pair<int, int>){pacmanPosition.first + MANSPEED, pacmanPosition.second});
+    }
+    if (pacmanPosition.first == -1 && pacmanPosition.second == 11)
+        this->pacman->setPosition((std::pair<int, int>){27, 11});
+    if (pacmanPosition.first == 28 && pacmanPosition.second == 11)
+        this->pacman->setPosition((std::pair<int, int>){0, 11});
 }
 
 void Pacman::render(IDisplayModule &lib) const
 {
-    float i = 0;
-    float j = 0;
+    std::pair<int, int> pacmanPosition = this->pacman->getPosition();
+    std::pair<int, int> ghostPosition;
 
-    for (i = 0; i != this->_MapTmp.size(); i++) {
-        for (j = 0; j != this->_MapTmp[i].size(); j++) {
-            std::string str(1, _MapTmp[i][j]);
-            lib.putText(str, 1, j*16, i*8);
-        }
-    }
-    lib.putText(this->_Score, 1, j*18, i*8);
-    // for (long unsigned int i = 0; i != this->_Map.size(); i++)
-    //     std::cout << _MapTmp[i];
-}
-
-void Pacman::InitFood(void)
-{
-    this->_FoodRemaining = 0;
-    for (int i = 0; i != 12; i++)
-        for (int j = 0; j != 14; j++)
-            if (_Map[i][j] == ' ') {
-                this->_Food.insert({this->_FoodRemaining, {i, j}});
-                this->_FoodRemaining += 1;
+    for (size_t i = 0; i < this->map.size(); i++) {
+        for (size_t j = 0; j < this->map.at(i).size(); j++) {
+            if (this->map.at(i).at(j) == '#') {
+                lib.setColor(IDisplayModule::Colors::BLUE);
+                lib.putFillRect((20 * j) + XORD, (20 * i) + YORD, 10, 10);
             }
-}
-
-void Pacman::InitPacman(void)
-{
-    this->_Pacman.first = 9;
-    this->_Pacman.second = 6;//({9, 6});
-}
-
-int get_rand(void)
-{
-    srand(time(NULL));
-    int nb = 0;
-    nb = rand() % 4;
-    return (nb);
-}
-
-void Pacman::nb_zero(int i)
-{
-    if (this->_Ghost.at(i).first + 1 < 13 && this->_Map[this->_Ghost.at(i).first + 1][this->_Ghost.at(i).second] != '#')
-        this->_Ghost.at(i).first += 1;
-    else if (this->_Ghost.at(i).first - 1 > 1 && this->_Map[this->_Ghost.at(i).first - 1][this->_Ghost.at(i).second] != '#')
-        this->_Ghost.at(i).first -= 1;
-    else if (this->_Ghost.at(i).second + 1 < 15 && this->_Map[this->_Ghost.at(i).first][this->_Ghost.at(i).second + 1] != '#')
-        this->_Ghost.at(i).second += 1;
-    else if (this->_Ghost.at(i).second - 1 > 1 && this->_Map[this->_Ghost.at(i).first][this->_Ghost.at(i).second - 1] != '#')
-        this->_Ghost.at(i).second -= 1;
-}
-
-void Pacman::nb_one(int i)
-{
-    if (this->_Ghost.at(i).first - 1 > 1 && this->_Map[this->_Ghost.at(i).first - 1][this->_Ghost.at(i).second] != '#')
-        this->_Ghost.at(i).first -= 1;
-    else if (this->_Ghost.at(i).second + 1 < 15 && this->_Map[this->_Ghost.at(i).first][this->_Ghost.at(i).second + 1] != '#')
-        this->_Ghost.at(i).second += 1;
-    else if (this->_Ghost.at(i).second - 1 > 1 && this->_Map[this->_Ghost.at(i).first][this->_Ghost.at(i).second - 1] != '#')
-        this->_Ghost.at(i).second -= 1;
-    else if (this->_Ghost.at(i).first + 1 < 13 && this->_Map[this->_Ghost.at(i).first + 1][this->_Ghost.at(i).second] != '#')
-        this->_Ghost.at(i).first += 1;
-}
-
-void Pacman::nb_two(int i)
-{
-    if (this->_Ghost.at(i).second + 1 < 15 && this->_Map[this->_Ghost.at(i).first][this->_Ghost.at(i).second + 1] != '#')
-        this->_Ghost.at(i).second += 1;
-    else if (this->_Ghost.at(i).second - 1 > 1 && this->_Map[this->_Ghost.at(i).first][this->_Ghost.at(i).second - 1] != '#')
-        this->_Ghost.at(i).second -= 1;
-    else if (this->_Ghost.at(i).first + 1 < 13 && this->_Map[this->_Ghost.at(i).first + 1][this->_Ghost.at(i).second] != '#')
-        this->_Ghost.at(i).first += 1;
-    else if (this->_Ghost.at(i).first - 1 > 1 && this->_Map[this->_Ghost.at(i).first - 1][this->_Ghost.at(i).second] != '#')
-        this->_Ghost.at(i).first -= 1;
-}
-
-void Pacman::nb_three(int i)
-{
-    if (this->_Ghost.at(i).second - 1 > 1 && this->_Map[this->_Ghost.at(i).first][this->_Ghost.at(i).second - 1] != '#')
-        this->_Ghost.at(i).second -= 1;
-    else if (this->_Ghost.at(i).first + 1 < 13 && this->_Map[this->_Ghost.at(i).first + 1][this->_Ghost.at(i).second] != '#')
-        this->_Ghost.at(i).first += 1;
-    else if (this->_Ghost.at(i).first - 1 > 1 && this->_Map[this->_Ghost.at(i).first - 1][this->_Ghost.at(i).second] != '#')
-        this->_Ghost.at(i).first -= 1;
-    else if (this->_Ghost.at(i).second + 1 < 15 && this->_Map[this->_Ghost.at(i).first][this->_Ghost.at(i).second + 1] != '#')
-        this->_Ghost.at(i).second += 1;
-}
-
-bool Pacman::doesittouch(void)
-{
-    for (long unsigned int i = 1; i != this->_Ghost.size() + 1; i++) {
-        if (this->_powerup == 0 && this->_Ghost.at(i).first == this->_Pacman.first && this->_Ghost.at(i).second == this->_Pacman.second)
-            return (FALSE);
-        if (this->_powerup != 0 && this->_Ghost.at(i).first == this->_Pacman.first && this->_Ghost.at(i).second == this->_Pacman.second) {
-            this->_Ghost.at(i).first = 0;
-            return (TRUE);
+            if (this->map.at(i).at(j) != '#') {
+                lib.setColor(IDisplayModule::Colors::BLACK);
+                lib.putFillRect((20 * j) + XORD, (20 * i) + YORD, 10, 10);
+            }
+            if (this->map.at(i).at(j) == '.') {
+                lib.setColor(IDisplayModule::Colors::YELLOW);
+                lib.putFillRect((20 * j) + XORD + 5, (20 * i) + YORD + 5, 2, 2);
+            }
         }
     }
-    return (TRUE);
-}
-
-bool Pacman::CanMove(void)
-{
-    if (this->_direction == 1)
-        if ((this->_Map[this->_Pacman.first][_Pacman.second + 1] == '#'))
-            return (FALSE);
-    if (this->_direction == 2)
-        if ((this->_Map[this->_Pacman.first][this->_Pacman.second - 1] == '#'))
-            return (FALSE);
-    if (this->_direction == 3)
-        if ((this->_Map[this->_Pacman.first - 1][this->_Pacman.second] == '#'))
-            return (FALSE);
-    if (this->_direction == 4)
-        if ((this->_Map[this->_Pacman.first + 1][this->_Pacman.second] == '#'))
-            return (FALSE);
-    return (TRUE);
-}
-
-void Pacman::Moving(void)
-{
-    int nb;
-    for (long unsigned int i = 1; i != this->_Ghost.size() + 1; i++)
-        if (this->_Ghost.at(i).first > 0) {
-            nb = get_rand();
-            if (nb == 0)
-                nb_zero(i);
-            if (nb == 1)
-                nb_one(i);
-            if (nb == 2)
-                nb_two(i);
-            if (nb == 3)
-                nb_three(i);
-        }
-}
-
-void Pacman::gain_coin(void)
-{
-    for (long unsigned int i = 1; i != this->_Food.size(); i++)
-        if (this->_Food.at(i).first == this->_Pacman.first && this->_Food.at(i).second == this->_Pacman.second) {
-            this->_FoodRemaining -= 1;
-            this->_Food.at(i).first = 0;
-        }
-    for (long unsigned int i = 1; i < this->_SuperFood.size() + 1; i++)
-        if (this->_SuperFood.at(i).first == this->_Pacman.first && this->_SuperFood.at(i).second == this->_Pacman.second) {
-            this->_SuperFood.at(i).first = 0;
-            this->_powerup = 30;
-        }
-    if (this->_FoodRemaining == 0) {
-        endwin();
-        std::cout << "gg \n";
-        exit(0);
+    lib.setColor(this->pacman->getColor());
+    lib.putFillCircle((20 * pacmanPosition.first) + 25, (20 * pacmanPosition.second), MANSIZE);
+    for (size_t i = 0; i < this->ghost.size(); i++) {
+        ghostPosition = this->ghost.at(i)->getPosition();
+        lib.setColor(this->ghost.at(i)->getColor());
+        lib.putFillCircle((20 * ghostPosition.first) + XORD, (20 * ghostPosition.second) + YORD, GHOSTSIZE);
     }
 }
 
-void Pacman::MovePacman(void)
+void Pacman::InitMap(void)
 {
-    if (this->_direction == 1)
-        this->_Pacman = {this->_Pacman.first, this->_Pacman.second + 1};
-    if (this->_direction == 2)
-        this->_Pacman = {this->_Pacman.first, this->_Pacman.second - 1};
-    if (this->_direction == 3)
-        this->_Pacman = {this->_Pacman.first - 1, this->_Pacman.second};
-    if (this->_direction == 4)
-        this->_Pacman = {this->_Pacman.first + 1, this->_Pacman.second};
+    this->map.push_back("#############################\n");
+    this->map.push_back("#............###............#\n");
+    this->map.push_back("#.####.#####.###.#####.####.#\n");
+    this->map.push_back("#...........................#\n");
+    this->map.push_back("#.####.##.#########.##.####.#\n");
+    this->map.push_back("#......##....###....##.####.#\n");
+    this->map.push_back("#......#####.###.#####......#\n");
+    this->map.push_back("######.##...........##.######\n");
+    this->map.push_back("     #.##.###   ###.##.#     \n");
+    this->map.push_back("     #.##.##     ##.##.#     \n");
+    this->map.push_back("######.##.##HHHHH##.##.######\n");
+    this->map.push_back("..........##HHHHH##..........\n");
+    this->map.push_back("######.##.##HHHHH##.##.######\n");
+    this->map.push_back("     #.##.#########.##.#     \n");
+    this->map.push_back("     #.##.....O.....##.#     \n");
+    this->map.push_back("######.## ######### ##.######\n");
+    this->map.push_back("#............###............#\n");
+    this->map.push_back("#.####.#####.###.#####.####.#\n");
+    this->map.push_back("#...##.................##...#\n");
+    this->map.push_back("###.##.##.#########.##.##.###\n");
+    this->map.push_back("#......##....###....##......#\n");
+    this->map.push_back("#.##########.###.##########.#\n");
+    this->map.push_back("#...........................#\n");
+    this->map.push_back("#############################\n");
 }
 
-Pacman::Pacman()
+Pacman::Man::Man()
 {
-    this->_powerup = 0;
-    this->_can_go = TRUE;
-    this->_can_move = TRUE;
-    this->_direction = 0;
-    this->_FoodRemaining = 0;
-    this->_name = "Pacman";
-    InitMap();
-    InitSuperFood();
-    InitGhost();
-    InitFood();
-    InitPacman();
+    this->lives = 3;
+    this->color = IDisplayModule::Colors::YELLOW;
+    this->position = {14, 14};
 }
 
-Pacman::~Pacman()
+Pacman::Man::Man(int _live, std::pair<int, int> _position, IDisplayModule::Colors _color)
 {
+    this->lives = _live;
+    this->color = _color;
+    this->position = _position;
+    this->direction = 0;
+}
+
+Pacman::Man::~Man()
+{
+}
+
+void Pacman::Man::setLives(int _lives)
+{
+    this->lives = _lives;
+}
+
+int Pacman::Man::getLives(void) const
+{
+    return (this->lives);
+}
+
+void Pacman::Man::setDirection(int _direction)
+{
+    this->direction = _direction;
+}
+
+int Pacman::Man::getDirection(void) const
+{
+    return (this->direction);
+}
+
+void Pacman::Man::setPosition(std::pair<int, int> _position)
+{
+    this->position = _position;
+}
+
+std::pair<int, int> Pacman::Man::getPosition(void) const
+{
+    return (this->position);
+}
+
+void Pacman::Man::setColor(IDisplayModule::Colors _color)
+{
+    this->color = _color;
+}
+
+IDisplayModule::Colors Pacman::Man::getColor(void) const
+{
+    return (this->color);
 }
 
 extern "C" std::unique_ptr<IGameModule> createLib(void)

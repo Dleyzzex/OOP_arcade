@@ -8,20 +8,19 @@
 #ifndef PACMAN_HPP_
 #define PACMAN_HPP_
 
-#include <ncurses.h>
-#include <cstdlib>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
+#define XORD 30
+#define YORD 5
+#define MANSIZE 10
+#define GHOSTSIZE 8
+#define MANSPEED 1
+#define SPEED 10
+
 #include <iostream>
 #include <vector>
-#include <fstream>
-#include <string>
 #include <algorithm>
-#include <sstream>
 #include <iterator>
-#include <unistd.h>
-#include <bits/stdc++.h>
+#include <memory>
+#include <map>
 #include "Arcade_interfaces.hpp"
 
 class Pacman : public IGameModule {
@@ -40,8 +39,12 @@ class Pacman : public IGameModule {
         void nb_three(int i);
         bool CanMove(void);
         bool doesittouch();
-        void MovePacman(void);
         void gain_coin(void);
+
+        void movePacman(int);
+        void moveGhost(int);
+
+        bool checkDirection(size_t);
 
         // Reset game at any moment
         void reset();
@@ -74,21 +77,54 @@ class Pacman : public IGameModule {
         const std::string &getLibName() const;
 
     private:
-        std::vector<std::string> _MapTmp;
+        /*
+        bool _can_go;
+        bool _can_move;
         int _FoodRemaining;
         int _LifeRemaining;
-        std::vector<std::string> _Map;
+        int _direction;
+        int _powerup;
+        std::string _Score;
         std::pair<int, int> _Pacman;
+        std::vector<std::string> _MapTmp;
         std::map<int, std::pair<int, int>> _Ghost;
         std::map<int, std::pair<int, int>> _Food;
         std::map<int, std::pair<int, int>> _SuperFood;
-        int _direction;
-        int _powerup;
-        bool _can_go;
-        bool _can_move;
-        std::string _name;
-        std::string _Score;
+        */
+        class Man
+        {
+        public:
+            Man();
+            Man(int, std::pair<int, int>, IDisplayModule::Colors);
+            ~Man();
+            // Lives
+            void setLives(int);
+            int getLives() const;
+            // Direction
+            void setDirection(int);
+            int getDirection() const;
+            // Position
+            void setPosition(std::pair<int, int>);
+            std::pair<int, int> getPosition() const;
+            // Color
+            void setColor(IDisplayModule::Colors);
+            IDisplayModule::Colors getColor(void) const;
+        private:
+            int lives;
+            int direction;
+            std::pair<int, int> position;
+            IDisplayModule::Colors color;
+        };
+
+        std::string gameName;
+        std::unique_ptr<Man> pacman;
+        std::vector<std::unique_ptr<Man>> ghost;
+        std::vector<std::string> map;
+        std::vector<std::unique_ptr<Man>> getGhosts(void);
+        int speed;
+        int direction;
+        int direct;
 };
-char *  itoa ( int value, char * str, int base );
+char *itoa(int value, char * str, int base);
 
 #endif /* !PACMAN_HPP_ */
