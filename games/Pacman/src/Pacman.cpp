@@ -315,10 +315,10 @@ void Pacman::render(IDisplayModule &lib) const
     }
     if (won == true) {
         std::string tmp("Well done ! You reach level " + std::to_string(lvl) + " !");
-        lib.putText(tmp, 20, 250, 200);
+        lib.putText(tmp, 20, 130, 220);
     }
-    if (lost == true)
-        lib.putText("gAmE OvEr", 20, 250, 200);
+    else if (lost == true)
+        lib.putText("gAmE OvEr", 20, 260, 200);
     lib.putText("Lives : ", 12, 35, 170);
     lib.putText(std::to_string(pacman->getLives()), 12, 100, 170);
     lib.putText("Level : " + std::to_string(lvl), 12, 35, 270);
