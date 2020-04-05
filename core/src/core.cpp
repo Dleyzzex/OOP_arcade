@@ -72,12 +72,11 @@ void core::launch(void)
 
     lib->open();
     lib->update();
-    while (lib->isOpen() == true) {
-        updateLib();
-        this->isMenu = Menu->isOpen();
-        if (isMenu == true) {
-           updateMenu();
+    while (lib->isOpen()) {
+        if (Menu->isOpen()) {
+            updateMenu();
         } else {
+            updateLib();
             playGame();
         }
         lib->render();
@@ -92,7 +91,13 @@ void core::playGame(void)
 
 void core::updateMenu(void)
 {
-    Menu->update(*lib, *game);
+    Menu->update(*lib, *game, &gIndex);
+    if (Menu->changeLib() != -1) {
+        this->lIndex = Menu->changeLib();
+        this->lib->close();
+        this->lib = getLib(libnames.at(lIndex));
+        this->lib->open();
+    }
     Menu->render(*lib);
 }
 

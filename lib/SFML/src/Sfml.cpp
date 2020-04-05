@@ -152,14 +152,14 @@ void Sfml::clear() const
 
 void Sfml::update()
 {
+    this->prevKey = this->CurrentKey;
     if (this->window->pollEvent(this->event)) {
         if (this->event.type == sf::Event::Closed)
             this->window->close();
-        this->prevKey = this->CurrentKey;
-        if (this->event.type == sf::Event::KeyReleased)
-            this->CurrentKey = 0;
         if (this->event.type == sf::Event::KeyPressed)
             this->CurrentKey = 1;
+        else
+            this->CurrentKey = 0;
         if (this->event.type == sf::Event::TextEntered)
             if (this->event.text.unicode < 128)
                 this->lastKey = static_cast<char>(this->event.text.unicode);

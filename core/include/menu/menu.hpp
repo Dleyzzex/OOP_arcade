@@ -20,6 +20,11 @@ private:
     std::string gamename;
     std::vector<std::string> libnames;
     std::vector<std::string> gamenames;
+    std::pair <int, int> idx;
+    int idxGame = -1;
+    int idxLib = -1;
+    bool selected = 0;
+    std::pair <size_t, size_t> cursorPos;
 public:
     menu();
     menu(std::vector<std::string>, std::vector<std::string>);
@@ -29,7 +34,8 @@ public:
     std::string getOneName(std::string);
     std::vector<std::string> getNames(std::vector<std::string>);
     void render(IDisplayModule &lib);
-    void update(IDisplayModule &lib, IGameModule &game);
+    int changeLib(void);
+    void update(IDisplayModule &lib, IGameModule &game, int *);
 };
 
 #endif
