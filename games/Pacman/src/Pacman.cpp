@@ -243,12 +243,12 @@ void Pacman::render(IDisplayModule &lib) const
         for (size_t j = 0; j < this->map.at(i).size(); j++) {
             if (this->map.at(i).at(j) == '#') {
                 lib.setColor(IDisplayModule::Colors::BLUE);
-                lib.putFillRect((20 * j) + XORD, (20 * i) + YORD, 10, 10);
+                lib.putFillRect((20 * j) + XORD, (20 * i) + YORD, 17, 17);
             }
         }
     }
     lib.setColor(this->pacman->getColor());
-    lib.putFillCircle((20 * pacmanPosition.first) + 25, (20 * pacmanPosition.second), MANSIZE);
+    lib.putFillCircle((20 * pacmanPosition.first) + 30, (20 * pacmanPosition.second) + 5, MANSIZE);
     for (size_t i = 0; i < this->ghost.size(); i++) {
         ghostPosition = this->ghost.at(i)->getPosition();
         lib.setColor(this->ghost.at(i)->getColor());
@@ -257,7 +257,8 @@ void Pacman::render(IDisplayModule &lib) const
     for (size_t i = 0; i < food.size(); i++) {
         if (food.at(i).first == true) {
             lib.setColor(IDisplayModule::Colors::YELLOW);
-            lib.putFillRect((20 * food.at(i).second.second) + XORD + 5, (20 * food.at(i).second.first) + YORD + 5, 2, 2);
+            lib.putPixel((20 * food.at(i).second.second) + XORD + 7, (20 * food.at(i).second.first) + YORD + 7);
+            // lib.putFillRect((20 * food.at(i).second.second) + XORD + 5, (20 * food.at(i).second.first) + YORD + 5, 2, 2);
         }
     }
     if (won == true)

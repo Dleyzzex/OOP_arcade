@@ -10,7 +10,7 @@
 
 #define XORD 30
 #define YORD 5
-#define MANSIZE 10
+#define MANSIZE 9
 #define GHOSTSIZE 8
 #define MANSPEED 1
 #define SPEED 10
