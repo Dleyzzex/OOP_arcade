@@ -144,7 +144,8 @@ bool Ncurses::isKeyPressedOnce(IDisplayModule::Keys key) const
 
 void my_clear()
 {
-    clear();
+    usleep(15000);
+    wclear(stdscr);
 }
 
 // Handle Loop
@@ -303,7 +304,7 @@ void Ncurses::putFillCircle(float x, float y, float rad) const
 void Ncurses::putText(const std::string &text, unsigned int size, float x, float y) const
 {
     (void)size;
-    mvprintw(y/8, x/16, text.c_str());
+    mvprintw(y/16, x/8, text.c_str());
 }
 
 // We chose not to display images because some library can't and it would cause other problems
