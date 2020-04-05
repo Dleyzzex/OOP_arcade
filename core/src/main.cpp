@@ -37,15 +37,13 @@ int main(int ac, char **av)
 
     (void) ac;
     (void) av;
-    // try {
-    //     checkErrors(ac, av);
-    // } catch(const std::exception& e) {
-    //     std::cerr << e.what() << '\n';
-    // }
     std::vector<std::string> libnames = getFilenames(libs);
     std::vector<std::string> gamenames = getFilenames(games);
     if (ac == 2) {
         std::string tmp(av[1]);
+        size_t find = tmp.find(".so");
+        if (find == std::string::npos)
+            exit(84);
         std::string lib = getOneName(tmp);
         std::vector<std::string> names = getNames(libnames);
         for (size_t i = 0; i < names.size(); i++)

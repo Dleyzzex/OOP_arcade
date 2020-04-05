@@ -21,6 +21,8 @@
 #include <iterator>
 #include <memory>
 #include <map>
+#include <sstream>
+#include <fstream>
 #include <ostream>
 #include "Arcade_interfaces.hpp"
 
@@ -42,8 +44,10 @@ class Pacman : public IGameModule {
         bool doesittouch();
         void gain_coin(void);
 
-        void movePacman(int);
-        void moveGhost(int);
+        void movePacman();
+        void moveGhost();
+        void Bestscore();
+        void Stock_score();
 
         bool checkDirection(size_t);
 
@@ -58,9 +62,6 @@ class Pacman : public IGameModule {
         bool saveToFile(const std::string &filepath) const; // with filename
         bool saveToFile() const; // default filename
 
-        // Highscores are stored as such :
-        // "name:value\n
-        // name2:value2\nEOF"
         // Set the player's name for the highscore
         void setPlayerName(const std::string &name);
         // get the current score
@@ -78,24 +79,11 @@ class Pacman : public IGameModule {
         const std::string &getLibName() const;
 
     private:
-        /*
-        bool _can_go;
-        bool _can_move;
-        int _FoodRemaining;
-        int _LifeRemaining;
-        int _direction;
-        int _powerup;
-        std::string _Score;
-        std::pair<int, int> _Pacman;
-        std::vector<std::string> _MapTmp;
-        std::map<int, std::pair<int, int>> _Ghost;
-        std::map<int, std::pair<int, int>> _SuperFood;
-        */
         class Man
         {
         public:
             Man();
-            Man(int, std::pair<int, int>, IDisplayModule::Colors);
+            Man(int, std::pair<int, int>, IDisplayModule::Colors, int);
             ~Man();
             // Lives
             void setLives(int);
@@ -122,13 +110,19 @@ class Pacman : public IGameModule {
         std::vector<std::string> map;
         std::vector<std::unique_ptr<Man>> getGhosts(void);
         std::vector<std::pair<bool, std::pair<int, int>>> food;
+        std::pair<int, int> pacmanPosition;
         void checkCollisions(void);
         bool asWon(void);
         bool won;
         bool lost;
         int speed;
+        int lvl;
         int direction;
         int direct;
+        int _score;
+        int _best_score_aff;
+        std::string _best_gamer_aff;
+        std::vector<std::pair<std::string, int>> _best_score;
 };
 char *itoa(int value, char * str, int base);
 
