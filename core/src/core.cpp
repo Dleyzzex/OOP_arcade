@@ -91,7 +91,12 @@ void core::playGame(void)
 
 void core::updateMenu(void)
 {
+    int saveIdxGame = gIndex;
+
     Menu->update(*lib, *game, &gIndex);
+
+    if (saveIdxGame != gIndex)
+        this->game = getGame(gamenames.at(gIndex));
     if (Menu->changeLib() != -1) {
         this->lIndex = Menu->changeLib();
         this->lib->close();
