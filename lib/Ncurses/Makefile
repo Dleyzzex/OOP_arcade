@@ -6,16 +6,16 @@
 ##
 
 DIR_SRC	=	./src/
-DIR_INC	=	./include
+DIR_INC	=	../../include/interface
 # DIR_INC	=	./lib/Ncurses/include
 
-NAME	=	lib_arcade_ncurses.so
+NAME	=	lib_arcade_Ncurses.so
 
 SRC		=   $(DIR_SRC)Ncurses.cpp \
 
 OBJS	=	$(SRC:.cpp=.o)
 
-CXXFLAGS	+=	-Wall -Wextra -I$(DIR_INC) -g -fPIC
+CXXFLAGS	+=	-Wall -Wextra -I $(DIR_INC) -I ./include -g -fPIC
 
 all	:	$(OBJS)
 		g++ -shared -o $(NAME) $(OBJS) -lncurses
