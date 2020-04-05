@@ -20,7 +20,6 @@ void Sdl::reset()
 void Sdl::open()
 {
     this->name = "Sdl";
-    printf("aaaa\n");
     SDL_Init(SDL_INIT_EVERYTHING);
     TTF_Init();
     SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &this->window, &this->renderer);
@@ -163,7 +162,6 @@ void Sdl::update()
 {
     Uint32 current = SDL_GetTicks();
 
-    printf("sdl\n");
     this->timeRange += (Uint32)(1000 / 60);
     if (current < timeRange)
         SDL_Delay(timeRange - current);
@@ -279,7 +277,7 @@ void Sdl::putText(const std::string &text, unsigned int size, float x, float y) 
 {
     SDL_Color color;
     SDL_Rect pos{(int)x, (int)y, 0, 0};
-    TTF_Font *font = TTF_OpenFont("../../assets/arial.ttf", size);
+    TTF_Font *font = TTF_OpenFont("./assets/arial.ttf", size);
 
     SDL_GetRenderDrawColor(this->renderer, &color.r, &color.g, &color.b, &color.a);
     SDL_Surface *texte = TTF_RenderText_Solid(font, text.c_str(), color);
