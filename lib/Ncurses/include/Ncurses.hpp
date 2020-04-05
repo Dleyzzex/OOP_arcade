@@ -8,19 +8,20 @@
 #ifndef NCURSES_HPP_
 #define NCURSES_HPP_
 
-#include "../include/Arcade_interfaces.hpp"
+#include "Arcade_interfaces.hpp"
 #include <ncurses.h>
 #include <memory>
 
 #include <ncurses.h>
 #include <cstdlib>
-#include <string>
 #include <iostream>
 #include <vector>
 #include <fstream>
 #include <string>
 #include <algorithm>
+#include <string>
 #include <sstream>
+#include <ctime>
 #include <iterator>
 #include <iterator>
 #include <unistd.h>
@@ -29,17 +30,18 @@
 class Ncurses : public IDisplayModule {
     private:
         std::string  _name;
-        char lastKey;
-        bool CurrentKey = false;
-        bool prevKey = false;
+        bool CurrentKey = ERR;
+        bool prevKey = ERR;
+        int ch = ERR;
     public:
         Ncurses();
-        ~Ncurses();
         // For the core
         // Reset the library
         void reset();
         //open / inits window
-        virtual void open();
+        void open();
+        void close();
+
         // Check if the window is open
         bool isOpen() const;
 
@@ -66,7 +68,6 @@ class Ncurses : public IDisplayModule {
         // // Handle Loop
         void clear() const;
         void update();
-        void close();
         void render() const;
         // // You don't need all three of them, only one should be enough but we added the three of them
         // in case some of you want to seperate each step

@@ -9,9 +9,6 @@
 
 Ncurses::Ncurses(){}
 
-Ncurses::~Ncurses()
-{}
-
 void Ncurses::close()
 {
     endwin();
@@ -19,14 +16,19 @@ void Ncurses::close()
 
 void Ncurses::reset()
 {
-    this->clear();
-    setColor(DEFAULT);
+    return;
 }
 
 void Ncurses::open()
 {
     this->_name = "Ncurses";
     initscr();
+    wresize(stdscr, HEIGHT, WIDTH);
+    cbreak();
+        timeout(0);
+    nodelay(stdscr, TRUE);
+    curs_set(0);
+    keypad(stdscr, TRUE);
     if(has_colors() == FALSE)
     {
         endwin();
@@ -34,18 +36,14 @@ void Ncurses::open()
         exit(1);
     }
     start_color();
-    cbreak();
-    noecho();
-    keypad(stdscr, TRUE);
-    // curs_set(0);
-    // timeout(100);
 }
 // Check if the window is open
 
 bool Ncurses::isOpen() const
 {
-    return (true);
-    // return this->window->isOpen();
+    if (stdscr != NULL)
+        return true;
+    return false;
 }
 // Handle switching libs & games (the names are explicit)
 // Those are all key presses
@@ -105,43 +103,41 @@ bool Ncurses::shouldExit() const
 
 bool Ncurses::KeySet(IDisplayModule::Keys key) const
 {
-    int ch = getch();
     switch (key) {
-        case LEFT: if (ch == KEY_LEFT) { return true; }             break;
-        case RIGHT: if (ch == KEY_RIGHT) { return true; }           break;
-        case UP: if (ch == KEY_UP) { return true; }                 break;
-        case DOWN: if (ch == KEY_DOWN) { return true; }             break;
-        case Z: if (ch == 122) { return true; }                   break;
-        case Q: if (ch == 113) { return true; }                   break;
-        case S: if (ch == 115) { return true; }                   break;
-        case D: if (ch == 100) { return true; }                   break;
-        case A: if (ch == 97) { return true; }                   break;
-        case E: if (ch == 101) { return true; }                   break;
-        case W: if (ch == 119) { return true; }                   break;
-        case X: if (ch == 120) { return true; }                   break;
-        case SPACE: if (ch == 32) { return true; }           break;
-        case J: if (ch == 109) { return true; }                   break;
-        case K: if (ch == 108) { return true; }                   break;
-        case U: if (ch == 117) { return true; }                   break;
-        case I: if (ch == 105) { return true; }                   break;
-        case ENTER: if (ch == 10) { return true; }          break;
-        case BACKSPACE: if (ch == 263) { return true; }   break;
+        case LEFT: if (this->ch == KEY_LEFT) { return true; }             break;
+        case RIGHT: if (this->ch == KEY_RIGHT) { return true; }           break;
+        case UP: if (this->ch == KEY_UP) { return true; }                 break;
+        case DOWN: if (this->ch == KEY_DOWN) { return true; }             break;
+        case Z: if (this->ch == 122) { return true; }                   break;
+        case Q: if (this->ch == 113) { return true; }                   break;
+        case S: if (this->ch == 115) { return true; }                   break;
+        case D: if (this->ch == 100) { return true; }                   break;
+        case A: if (this->ch == 97) { return true; }                   break;
+        case E: if (this->ch == 101) { return true; }                   break;
+        case W: if (this->ch == 119) { return true; }                   break;
+        case X: if (this->ch == 120) { return true; }                   break;
+        case SPACE: if (this->ch == 32) { return true; }           break;
+        case J: if (this->ch == 106) { return true; }                   break;
+        case K: if (this->ch == 107) { return true; }                   break;
+        case U: if (this->ch == 117) { return true; }                   break;
+        case I: if (this->ch == 105) { return true; }                   break;
+        case ENTER: if (this->ch == 10) { return true; }          break;
+        case BACKSPACE: if (this->ch == KEY_BACKSPACE) { return true; }   break;
         case KEYS_END: return false;
-        default: return false;
     }
     return false;
 }
 
 bool Ncurses::isKeyPressed(IDisplayModule::Keys key) const
 {
-    if (CurrentKey == 1 && KeySet(key))
+    if (this->CurrentKey == 1 && this->KeySet(key))
         return true;
     return false;
 }
 
 bool Ncurses::isKeyPressedOnce(IDisplayModule::Keys key) const
 {
-    if ((this->CurrentKey == 1 && KeySet(key)) && this->prevKey == 0)
+    if ((this->CurrentKey == 1 && this->KeySet(key)) && this->prevKey == 0)
         return true;
     return false;
 }
@@ -159,9 +155,14 @@ void Ncurses::clear() const
 
 void Ncurses::update()
 {
-    printf("ncurses\n");
+    noecho();
+    this->ch = getch();
     this->prevKey = this->CurrentKey;
-    this->CurrentKey = 1;
+    if (ch == ERR)
+        this->CurrentKey = 0;
+    else {
+        this->CurrentKey = 1;
+    }
 }
 
 float Ncurses::getDelta() const
@@ -185,7 +186,8 @@ void Ncurses::render() const
 // it returns \b if backspace was pressed (to delete a character from the name).
 char Ncurses::getKeyCode() const
 {
-    return this->lastKey;
+    return this->ch;
+    // return this->lastKey;
 }
 
 // Display Stuff
@@ -218,89 +220,90 @@ void Ncurses::setColor(IDisplayModule::Colors col)
 // Display a pixel
 void Ncurses::putPixel(float x, float y) const
 {
-    mvaddstr(y/8, x/16, "x");
+    mvprintw(y / 16, x / 8, "X");
 }
 
 // Display a line
 void Ncurses::putLine(float x1, float y1, float x2, float y2) const
 {
-    int tmp = 1;
-    while (tmp != 0) {
-        mvaddstr(y1/8, x1/16, "x");
-        if (x1 != x2) {
-            if (x1 < x2)
-                x1++;
-            else
-                x1--;
-        }
-        if (y1 != y2) {
-            if (y1 < y2)
-                y1++;
-            else
-                y1--;
-        }
-        if (x1 == x2 && y1 == y2)
-            tmp = 0;
-    }
-    mvaddstr(y2/8, x2/16, "x");
-    // sf::VertexArray line(sf::Lines, 2);
+    x1 /= 8;
+    x2 /= 8;
+    y1 /= 16;
+    y2 /= 16;
 
-    // line[0].position = sf::Vector2f(x1, y1);
-    // line[1].position = sf::Vector2f(x2, y2);
-    // line[0].color = this->color;
-    // line[1].color = this->color;
-    // this->window->draw(line);
+    if (x1 < x2 && y1 == y2) {
+        mvhline(y1, x1, 'X', x2 - x1);
+        return;
+    }
+    if (x1 > x2 && y1 == y2) {
+        mvhline(y1, x2, 'X', x1 - x2);
+        return;
+    }
+    if (y1 < y2 && x1 == x2) {
+        mvhline(y1, x1, 'X', y2 - y1);
+        return;
+    }
+    if (y1 > y2 && x1 == x2) {
+        mvhline(y2, x1, 'X', y1 - y2);
+        return;
+    }
+
 }
 // Display an empty rectangle
 void Ncurses::putRect(float x, float y, float w, float h) const
 {
-    float x1 = w;
-    float x2 = x;
-    float y1 = h;
-    float y2 = y;
-    for (; x1 != x2 + 1 ; x1++) {
-        for (y1 = h; y1 != y2 + 1; y1++) {
-            if (x1 == x  || y1 == y || x1 == w || y1 == h)
-                mvaddstr(x1/8, y1/16, "x");
-        }
-    }
+    w /= 8;
+    x /= 8;
+    h /= 16;
+    y /= 16;
+    mvhline(y, x, 'X', w);
+    mvhline(y + h - 1, x, 'X', w);
+    mvvline(y, x, 'X', h);
+    mvvline(y, x + w - 1, 'X', h);
 }
 // Display a full rectangle
 void Ncurses::putFillRect(float x, float y, float w, float h) const
 {
-    float x1 = w;
-    float x2 = x;
-    float y1 = h;
-    float y2 = y;
-    for (; x1 != x2 + 1 ; x1++)
-        for (y1 = h; y1 != y2 + 1; y1++)
-                mvaddstr(x1/8, y1/16, "x");
+    w /= 8;
+    x /= 8;
+    h /= 16;
+    y /= 16;
+
+    for (float y1 = y; y1 < y + h - 1; y1++)
+        mvhline(y1, x, 'X', w);
 }
 // Display an empty circle
 void Ncurses::putCircle(float x, float y, float rad) const
 {
-    for (int i = 0; i < 1080; i++) {
-        for (int j = 0; j < 1920; j++) {
-            if ((x - i) * (x - i) + (y - j) * (y - j) == rad * rad)
-                mvaddstr(j/8, i/16, "x");
-        }
+    static const double PI = 3.1415926535;
+    double x1, y1;
+
+    x += rad;
+    y += rad;
+
+    for(double i = 0; i < 360; i += 0.1) {
+        x1 = rad * cos(i * PI / 180);
+        y1 = rad * sin(i * PI / 180);
+        putPixel(x + x1, y + y1);
     }
 }
 // Display a full circle
 void Ncurses::putFillCircle(float x, float y, float rad) const
 {
-    for (int i = 0; i < 1080; i++) {
-        for (int j = 0; j < 1920; j++) {
-            if ((x - i) * (x - i) + (y - j) * (y - j) <= rad * rad)
-                mvaddstr(j/8, i/16, "x");
-        }
+    x += rad;
+    y += rad;
+    int h = 0;
+    for (int x1 = -rad; x1 < rad ; x1++) {
+        h = (int)sqrt(rad * rad - pow(x1, 2));
+        for (int y1 = -h; y1 < h; y1++)
+            putPixel(x + x1, y + y1);
     }
 }
 // Display some text
 void Ncurses::putText(const std::string &text, unsigned int size, float x, float y) const
 {
-    size += 2;
-    mvaddstr(y/8, x/16, text.c_str());
+    (void)size;
+    mvprintw(y/8, x/16, text.c_str());
 }
 
 // We chose not to display images because some library can't and it would cause other problems
