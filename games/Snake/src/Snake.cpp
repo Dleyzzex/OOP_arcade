@@ -14,6 +14,8 @@ Snake::Snake()
     this->_direction = 3;
     this->_can_go = TRUE;
     this->_speed = 0;
+    this->_best_score_aff = 0;
+    this->_best_gamer_aff = "No best score";
     InitSnake();
     MoveSnake();
     InitFood();
@@ -255,8 +257,6 @@ void Snake::Bestscore()
         }
         ++count;
     }
-    if (count % 3 != 1)
-        exit (84);
 }
 
 void Snake::update(const IDisplayModule &lib)
