@@ -338,12 +338,19 @@ void Snake::reset()
     InitFood();
 }
 
-bool Snake::loadFromFile(const std::string &filepath){return true;}
+bool Snake::loadFromFile(const std::string &filepath)
+{
+    (void) filepath;
+    return true;
+}
 
 bool Snake::loadFromFile(){return true;}
 
 bool Snake::saveToFile(const std::string &filepath) const
-{return true;}
+{
+    (void) filepath;
+    return true;
+}
 
 bool Snake::saveToFile() const{return true;}
 
