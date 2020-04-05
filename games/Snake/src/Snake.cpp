@@ -219,6 +219,11 @@ void Snake::render(IDisplayModule &lib) const
 
 void Snake::Bestscore()
 {
+    std::ofstream myfile ("games/.saves/Nibbler", std::ofstream::out | std::ofstream::app);
+    if (myfile.is_open())
+        myfile.close();
+    else
+        std::system("touch games/.saves/Nibbler");
     std::ifstream file("games/.saves/Nibbler");
     int count = 1;
     int best_score = -1;
