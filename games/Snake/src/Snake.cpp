@@ -219,7 +219,7 @@ void Snake::render(IDisplayModule &lib) const
 
 void Snake::Bestscore()
 {
-    std::ifstream file("games/.saves/Snake_score.txt");
+    std::ifstream file("games/.saves/Nibbler");
     int count = 1;
     int best_score = -1;
     int best_score_tmp = -1;
@@ -299,14 +299,14 @@ void Snake::setPlayerName(const std::string &name)
 
 void Snake::Stock_score()
 {
-    std::ofstream myfile ("games/.saves/Snake_score.txt", std::ofstream::out | std::ofstream::app);
+    std::ofstream myfile ("games/.saves/Nibbler", std::ofstream::out | std::ofstream::app);
     if (myfile.is_open()) {
         auto result = this->_name + " : " + std::to_string(this->_score) + '\n';
         myfile << result;
         myfile.close();
     }
     else {
-        std::system("touch games/.saves/Snake_score.txt");
+        std::system("touch games/.saves/Nibbler");
         Stock_score();
     }
 }
