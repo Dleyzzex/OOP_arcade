@@ -255,6 +255,8 @@ void Snake::Bestscore()
         }
         ++count;
     }
+    if (count % 3 != 1)
+        exit (84);
 }
 
 void Snake::update(const IDisplayModule &lib)
