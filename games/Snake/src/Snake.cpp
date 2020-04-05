@@ -13,6 +13,7 @@ Snake::Snake()
     this->_Map = FillMyMap();
     this->_direction = 3;
     this->_can_go = TRUE;
+    this->_speed = 0;
     InitSnake();
     MoveSnake();
     InitFood();
@@ -23,8 +24,8 @@ Snake::~Snake()
 
 std::vector<std::string> Snake::FillMyMap(void)
 {
-    size_t x_l = 80;
-    size_t y_l = 16;
+    size_t x_l = 20;
+    size_t y_l = 20;
     std::vector<std::string> _map;
     for (size_t y = 0; y < y_l + 1; y++) {
         std::string _Line;
@@ -42,35 +43,35 @@ std::vector<std::string> Snake::FillMyMap(void)
 
 int Snake::SizeMap(void)
 {
-    int ko = 0;
-    for (auto i = this->_Snake.begin(); i != this->_Snake.end(); i++, ko++);
-    return (ko);
+    int tmpp = 0;
+    for (auto i = this->_Snake.begin(); i != this->_Snake.end(); i++, tmpp++);
+    return (tmpp);
 }
 
 bool Snake::doesittouch(void)
 {
     if (this->_direction == 1) {
-        int ko = 2;
-        for (auto i = this->_Snake.begin(); ko < SizeMap(); i++, ko++)
-            if (this->_Snake.at(1).first == this->_Snake.at(ko).first && this->_Snake.at(1).second + 1 == this->_Snake.at(ko).second)
+        int tmpp = 2;
+        for (auto i = this->_Snake.begin(); tmpp < SizeMap(); i++, tmpp++)
+            if (this->_Snake.at(1).first == this->_Snake.at(tmpp).first && this->_Snake.at(1).second + 1 == this->_Snake.at(tmpp).second)
                 return (FALSE);
     }
     if (this->_direction == 2) {
-        int ko = 2;
-        for (auto i = this->_Snake.begin(); ko < SizeMap(); i++, ko++)
-            if (this->_Snake.at(1).first == this->_Snake.at(ko).first && this->_Snake.at(1).second - 1 == this->_Snake.at(ko).second)
+        int tmpp = 2;
+        for (auto i = this->_Snake.begin(); tmpp < SizeMap(); i++, tmpp++)
+            if (this->_Snake.at(1).first == this->_Snake.at(tmpp).first && this->_Snake.at(1).second - 1 == this->_Snake.at(tmpp).second)
                 return (FALSE);
     }
     if (this->_direction == 3) {
-        int ko = 2;
-        for (auto i = this->_Snake.begin(); ko < SizeMap(); i++, ko++)
-            if (this->_Snake.at(1).first - 1 == this->_Snake.at(ko).first && this->_Snake.at(1).second == this->_Snake.at(ko).second)
+        int tmpp = 2;
+        for (auto i = this->_Snake.begin(); tmpp < SizeMap(); i++, tmpp++)
+            if (this->_Snake.at(1).first - 1 == this->_Snake.at(tmpp).first && this->_Snake.at(1).second == this->_Snake.at(tmpp).second)
                 return (FALSE);
     }
     if (this->_direction == 4) {
-        int ko = 2;
-        for (auto i = this->_Snake.begin(); ko < SizeMap(); i++, ko++)
-            if (this->_Snake.at(1).first + 1 == this->_Snake.at(ko).first && this->_Snake.at(1).second == this->_Snake.at(ko).second)
+        int tmpp = 2;
+        for (auto i = this->_Snake.begin(); tmpp < SizeMap(); i++, tmpp++)
+            if (this->_Snake.at(1).first + 1 == this->_Snake.at(tmpp).first && this->_Snake.at(1).second == this->_Snake.at(tmpp).second)
                 return (FALSE);
     }
     return (TRUE);
@@ -102,9 +103,9 @@ void Snake::InitSnake(void)
 
 bool Snake::DontTouchSnake(int nb1, int nb2)
 {
-    int ko = 1;
-    for (auto i = this->_Snake.begin(); ko < SizeMap(); i++, ko++) {
-        if (this->_Snake.at(ko).first == nb1 && this->_Snake.at(ko).second == nb2)
+    int tmp = 1;
+    for (auto i = this->_Snake.begin(); tmp < SizeMap(); i++, tmp++) {
+        if (this->_Snake.at(tmp).first == nb1 && this->_Snake.at(tmp).second == nb2)
             return (FALSE);
     }
     return (TRUE);
@@ -116,8 +117,8 @@ void Snake::InitFood(void)
     int nb1 = 0;
     int nb2 = 0;
     for (int tmp = 0; tmp != 1;) {
-        nb2 = (rand() % 77) + 1;
-        nb1 = (rand() % 15) + 1;
+        nb2 = (rand() % 17) + 1;
+        nb1 = (rand() % 17) + 1;
         if (this->_Map[nb1][nb2] == ' ' && DontTouchSnake(nb1, nb2) == TRUE)
             tmp = 1;
     }
@@ -131,30 +132,30 @@ void Snake::AddSnake(int size)
 
 void Snake::MoveSnake(void)
 {
-    int ko = 1;
-    int first = this->_Snake.at(ko).first;
-    int second = this->_Snake.at(ko).second;
-    int first1 = this->_Snake.at(ko).first;
-    int second1 = this->_Snake.at(ko).second;
+    int tmpp = 1;
+    int first = this->_Snake.at(tmpp).first;
+    int second = this->_Snake.at(tmpp).second;
+    int first1 = this->_Snake.at(tmpp).first;
+    int second1 = this->_Snake.at(tmpp).second;
     int tmp = 0;
     if (this->_direction == 1)
-        this->_Snake.at(ko) = {this->_Snake.at(ko).first, this->_Snake.at(ko).second + 1};
+        this->_Snake.at(tmpp) = {this->_Snake.at(tmpp).first, this->_Snake.at(tmpp).second + 1};
     if (this->_direction == 2)
-        this->_Snake.at(ko) = {this->_Snake.at(ko).first, this->_Snake.at(ko).second - 1};
+        this->_Snake.at(tmpp) = {this->_Snake.at(tmpp).first, this->_Snake.at(tmpp).second - 1};
     if (this->_direction == 3)
-        this->_Snake.at(ko) = {this->_Snake.at(ko).first - 1, this->_Snake.at(ko).second};
+        this->_Snake.at(tmpp) = {this->_Snake.at(tmpp).first - 1, this->_Snake.at(tmpp).second};
     if (this->_direction == 4)
-        this->_Snake.at(ko) = {this->_Snake.at(ko).first + 1, this->_Snake.at(ko).second};
-    for (auto i = this->_Snake.begin(); ko < SizeMap(); i++, ko++, tmp++) {
+        this->_Snake.at(tmpp) = {this->_Snake.at(tmpp).first + 1, this->_Snake.at(tmpp).second};
+    for (auto i = this->_Snake.begin(); tmpp < SizeMap(); i++, tmpp++, tmp++) {
         if (tmp % 2 == 0) {
-            first1 = this->_Snake.at(ko+1).first;
-            second1 = this->_Snake.at(ko+1).second;
-            this->_Snake.at(ko+1) = {first, second};
+            first1 = this->_Snake.at(tmpp+1).first;
+            second1 = this->_Snake.at(tmpp+1).second;
+            this->_Snake.at(tmpp+1) = {first, second};
         }
         if (tmp % 2 == 1) {
-            first = this->_Snake.at(ko+1).first;
-            second = this->_Snake.at(ko+1).second;
-            this->_Snake.at(ko+1) = {first1, second1};
+            first = this->_Snake.at(tmpp+1).first;
+            second = this->_Snake.at(tmpp+1).second;
+            this->_Snake.at(tmpp+1) = {first1, second1};
         }
     }
 }
@@ -195,40 +196,54 @@ void Snake::render(IDisplayModule &lib) const
 {
     for (float i = 0; i != this->_MapTmp.size(); i++) {
         for (float j = 0; j != this->_MapTmp[i].size(); j++) {
-            std::string str(1, this->_MapTmp[i][j]);
-            lib.putText(str, 1, j*16, i*8);
+            if (this->_MapTmp[i][j] == '#') {
+                lib.setColor(IDisplayModule::Colors::BLUE);
+                lib.putFillRect((20 * j) + XORD, (20 * i) + YORD, 10, 10);
+            }
+            if (this->_MapTmp[i][j] == 'o') {
+                lib.setColor(IDisplayModule::Colors::RED);
+                lib.putFillCircle((20 * j) + XORD, (20 * i) + YORD, 10);
+            }
+            if (this->_MapTmp[i][j] == 'x') {
+                lib.setColor(IDisplayModule::Colors::GREEN);
+                lib.putFillCircle((20 * j) + XORD, (20 * i) + YORD, 10);
+            }
         }
     }
 }
 
 void Snake::update(const IDisplayModule &lib)
 {
+    this->_speed += 1;
+    if (lib.isKeyPressedOnce(IDisplayModule::Keys::D)) {
+        if (this->_direction != 2)
+            this->_direction = 1;
+    }
     if (lib.isKeyPressedOnce(IDisplayModule::Keys::Q)) {
         if (this->_direction != 1)
             this->_direction = 2;
     }
-    if (lib.isKeyPressedOnce(IDisplayModule::Keys::D)) {
-        if (this->_direction != 1)
-            this->_direction = 2;
-    }
     if (lib.isKeyPressedOnce(IDisplayModule::Keys::S)) {
-        if (this->_direction != 1)
-            this->_direction = 2;
+        if (this->_direction != 3)
+            this->_direction = 4;
     }
     if (lib.isKeyPressedOnce(IDisplayModule::Keys::Z)) {
-        if (this->_direction != 1)
-            this->_direction = 2;
+        if (this->_direction != 4)
+            this->_direction = 3;
     }
-    this->_can_go = CanMove(); //FONCTION UPDATE
-    if (this->_can_go == FALSE)//FONCTION UPDATE
-        exit(0);//FONCTION UPDATE
-    Eat();//FONCTION UPDATE
-    RemoveFood();//FONCTION UPDATE
-    MoveSnake();//FONCTION UPDATE
+    if (this->_speed == SPEED) {
+        this->_can_go = CanMove(); //FONCTION UPDATE
+        if (this->_can_go == FALSE)//FONCTION UPDATE
+            reset();//FONCTION UPDATE
+        Eat();//FONCTION UPDATE
+        RemoveFood();//FONCTION UPDATE
+        MoveSnake();//FONCTION UPDATE
+        this->_speed = 0;
+    }
     this->_MapTmp = FillMyMap();
-    int ko = 1;
-    for (auto i = this->_Snake.begin(); i != this->_Snake.end(); i++, ko++)
-         this->_MapTmp[this->_Snake.at(ko).first][this->_Snake.at(ko).second] = 'x';
+    int tmpp = 1;
+    for (auto i = this->_Snake.begin(); i != this->_Snake.end(); i++, tmpp++)
+         this->_MapTmp[this->_Snake.at(tmpp).first][this->_Snake.at(tmpp).second] = 'x';
      this->_MapTmp [this->_Food.first][this->_Food.second] = 'o';
 }
 
@@ -245,7 +260,18 @@ std::pair<std::string, int> Snake::getScore() const
 }
 void Snake::setPlayerName(const std::string &name){;}
 
-void Snake::reset(){;}
+void Snake::reset()
+{
+    this->_Map = FillMyMap();
+    this->_direction = 3;
+    this->_can_go = TRUE;
+    this->_speed = 0;
+    std::map<int, std::pair<int, int>> RemoveSnake;
+    this->_Snake = RemoveSnake;
+    InitSnake();
+    MoveSnake();
+    InitFood();
+}
 
 bool Snake::loadFromFile(const std::string &filepath){return true;}
 

@@ -19,7 +19,8 @@ void Ncurses::close()
 
 void Ncurses::reset()
 {
-    return;
+    this->clear();
+    setColor(DEFAULT);
 }
 
 void Ncurses::open()
@@ -133,12 +134,16 @@ bool Ncurses::KeySet(IDisplayModule::Keys key) const
 
 bool Ncurses::isKeyPressed(IDisplayModule::Keys key) const
 {
-    return KeySet(key);
+    if (CurrentKey == 1 && KeySet(key))
+        return true;
+    return false;
 }
 
 bool Ncurses::isKeyPressedOnce(IDisplayModule::Keys key) const
 {
-    return KeySet(key);
+    if ((this->CurrentKey == 1 && KeySet(key)) && this->prevKey == 0)
+        return true;
+    return false;
 }
 
 void my_clear()
@@ -154,7 +159,9 @@ void Ncurses::clear() const
 
 void Ncurses::update()
 {
-    ;
+    printf("ncurses\n");
+    this->prevKey = this->CurrentKey;
+    this->CurrentKey = 1;
 }
 
 float Ncurses::getDelta() const
@@ -178,8 +185,7 @@ void Ncurses::render() const
 // it returns \b if backspace was pressed (to delete a character from the name).
 char Ncurses::getKeyCode() const
 {
-    return ('e');
-    // return this->lastKey;
+    return this->lastKey;
 }
 
 // Display Stuff
@@ -255,7 +261,7 @@ void Ncurses::putRect(float x, float y, float w, float h) const
     for (; x1 != x2 + 1 ; x1++) {
         for (y1 = h; y1 != y2 + 1; y1++) {
             if (x1 == x  || y1 == y || x1 == w || y1 == h)
-                mvaddstr(y1/8, x1/16, "x");
+                mvaddstr(x1/8, y1/16, "x");
         }
     }
 }
@@ -268,7 +274,7 @@ void Ncurses::putFillRect(float x, float y, float w, float h) const
     float y2 = y;
     for (; x1 != x2 + 1 ; x1++)
         for (y1 = h; y1 != y2 + 1; y1++)
-                mvaddstr(y1/8, x1/16, "x");
+                mvaddstr(x1/8, y1/16, "x");
 }
 // Display an empty circle
 void Ncurses::putCircle(float x, float y, float rad) const

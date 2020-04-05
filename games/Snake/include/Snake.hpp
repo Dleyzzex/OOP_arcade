@@ -22,6 +22,9 @@
 #include <unistd.h>
 #include <bits/stdc++.h>
 #include "Arcade_interfaces.hpp"
+#define XORD 30
+#define YORD 5
+#define SPEED 10
 
 class Snake : public IGameModule {
     public:
@@ -99,6 +102,7 @@ class Snake : public IGameModule {
         bool _can_go;
         std::string _name;
         std::vector<std::string> _MapTmp;
+        int _speed;
 };
 
 #endif /* !Snake_HPP_ */

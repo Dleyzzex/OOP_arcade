@@ -29,6 +29,9 @@
 class Ncurses : public IDisplayModule {
     private:
         std::string  _name;
+        char lastKey;
+        bool CurrentKey = false;
+        bool prevKey = false;
     public:
         Ncurses();
         ~Ncurses();

@@ -6,8 +6,8 @@
 ##
 
 DIR_SRC	=	./src/
-DIR_INC	=	./include
 DIR_INT	=	../../include/interface/
+DIR_INC	=	./include
 
 NAME	=	lib_arcade_nibbler.so
 
