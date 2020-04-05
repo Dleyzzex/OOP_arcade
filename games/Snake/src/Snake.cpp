@@ -210,6 +210,38 @@ void Snake::render(IDisplayModule &lib) const
             }
         }
     }
+    auto result = this->_name + " : " + std::to_string(this->_score);
+    lib.putText("result", 100, 0, 0);
+
+    auto best_result = this->_best_gamer_aff + " : " + std::to_string(this->_best_score_aff );
+    lib.putText("result", 100, 0, 0);
+}
+
+void Snake::Bestscore()
+{
+    std::ifstream file("games/.saves/Snake_score.txt");
+    int count = 1;
+    int best_score = -1;
+    int best_score_tmp = -1;
+    std::string::size_type sz;
+    std::string _name_tmp;
+    while (!file.eof()) {
+        std::string line;
+        file >> line;
+        if (count % 3 == 1) {
+            _name_tmp = line;
+        }
+        if (count % 3 == 0) {
+            best_score_tmp = std::stoi(line, &sz);
+            if (best_score_tmp > best_score) {
+                best_score = best_score_tmp;
+                this->_best_score = {{line, best_score}};
+                this->_best_score_aff = best_score;
+                this->_best_gamer_aff = line;
+            }
+        }
+        ++count;
+    }
 }
 
 void Snake::update(const IDisplayModule &lib)
@@ -238,30 +270,50 @@ void Snake::update(const IDisplayModule &lib)
         Eat();//FONCTION UPDATE
         RemoveFood();//FONCTION UPDATE
         MoveSnake();//FONCTION UPDATE
+        Bestscore();
         this->_speed = 0;
     }
     this->_MapTmp = FillMyMap();
     int tmpp = 1;
     for (auto i = this->_Snake.begin(); i != this->_Snake.end(); i++, tmpp++)
          this->_MapTmp[this->_Snake.at(tmpp).first][this->_Snake.at(tmpp).second] = 'x';
-     this->_MapTmp [this->_Food.first][this->_Food.second] = 'o';
+    this->_MapTmp [this->_Food.first][this->_Food.second] = 'o';
+    _score = this->_Snake.size() - 3;
 }
+
 
 std::vector<std::pair<std::string, int>> Snake::getBestScores() const
 {
-    std::vector<std::pair<std::string, int>> str;
-    return (str);
+    return (this->_best_score);
 }
 
 std::pair<std::string, int> Snake::getScore() const
 {
-    std::pair<std::string, int> str;
+    std::pair<std::string, int> str = {this->_name, this->_score};
     return str;
 }
-void Snake::setPlayerName(const std::string &name){;}
+void Snake::setPlayerName(const std::string &name)
+{
+    this->_name = name;
+}
+
+void Snake::Stock_score()
+{
+    std::ofstream myfile ("games/.saves/Snake_score.txt", std::ofstream::out | std::ofstream::app);
+    if (myfile.is_open()) {
+        auto result = this->_name + " : " + std::to_string(this->_score) + '\n';
+        myfile << result;
+        myfile.close();
+    }
+    else {
+        std::system("touch games/.saves/Snake_score.txt");
+        Stock_score();
+    }
+}
 
 void Snake::reset()
 {
+    Stock_score();
     this->_Map = FillMyMap();
     this->_direction = 3;
     this->_can_go = TRUE;

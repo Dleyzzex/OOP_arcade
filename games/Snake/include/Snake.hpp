@@ -44,6 +44,8 @@ class Snake : public IGameModule {
         std::vector<std::string> FillMyMap(void);
         void update(const IDisplayModule &lib);
         void render(IDisplayModule &lib) const;
+        void Stock_score();
+        void Bestscore();
         enum Keys {
             LEFT,
             RIGHT,
@@ -103,6 +105,10 @@ class Snake : public IGameModule {
         std::string _name;
         std::vector<std::string> _MapTmp;
         int _speed;
+        int _score;
+        int _best_score_aff;
+        std::string _best_gamer_aff;
+        std::vector<std::pair<std::string, int>> _best_score;
 };
 
 #endif /* !Snake_HPP_ */
