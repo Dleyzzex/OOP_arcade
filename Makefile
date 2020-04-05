@@ -11,7 +11,7 @@ all		:
 		make -C ./lib/SFML
 		make -C ./lib/SDL
 		# Games
-		#make -C ./games/Snake
+		make -C ./games/Snake
 		make -C ./games/Pacman
 		# Core
 		make -C ./core
