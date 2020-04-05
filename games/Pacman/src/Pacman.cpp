@@ -337,10 +337,10 @@ void Pacman::InitMap(void)
     this->map.push_back("     #.##.###...###.##.#     \n");
     this->map.push_back("     #....##     ##....#     \n");
     this->map.push_back("######.##...HHHHH...##.######\n");
-    this->map.push_back(".......##...HHHHH...##.......\n");
+    this->map.push_back(" ......##...HHHHH...##...... \n");
     this->map.push_back("######.##.##HHHHH##.##.######\n");
     this->map.push_back("     #....###...###....#     \n");
-    this->map.push_back("     #.##.....O.....##.#     \n");
+    this->map.push_back("     #.##...........##.#     \n");
     this->map.push_back("######.##.#########.##.######\n");
     this->map.push_back("#............###............#\n");
     this->map.push_back("#.####.#####.###.#####.####.#\n");
