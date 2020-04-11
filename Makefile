@@ -34,7 +34,7 @@ fclean	:
 		make fclean -C ./lib/SFML
 		make fclean -C ./lib/SDL
 		# Games
-		#make fclean -C ./games/Snake
+		make fclean -C ./games/Snake
 		make fclean -C ./games/Pacman
 		# Core
 		make fclean -C ./core/
